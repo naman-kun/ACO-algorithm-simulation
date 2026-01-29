@@ -1,0 +1,198 @@
+You must build a real-time, interactive Ant Colony Optimization (ACO) simulation for cybersecurity where ALL parameter changes immediately affect agent behavior and paths while the simulation is running.
+
+This is non-negotiable.
+
+1. REAL-TIME PARAMETER REACTIVITY (CRITICAL)
+
+All parameters must be read every simulation tick, not cached.
+
+When the user changes:
+
+Alpha (α)
+
+Beta (β)
+
+Rho (ρ)
+
+Malware speed
+
+Number of ants
+
+The very next movement decision of every ant must reflect the new values.
+
+There must be:
+
+No restart required
+
+No reset required
+
+No delayed effect
+
+If paths do not visibly change immediately after slider movement, the implementation is incorrect.
+
+2. ANT PATHS MUST VISIBLY CHANGE (MANDATORY)
+
+Ants must:
+
+Travel from file to file along visible paths
+
+Choose paths probabilistically using ACO
+
+When:
+
+Alpha increases → ants must visibly prefer established pheromone paths
+
+Beta increases → ants must visibly prefer currently infected or suspicious files
+
+Rho increases → previously strong paths must visibly fade and disappear faster
+
+This must be clearly observable on screen, not just mathematically correct.
+
+3. TRUE PATH-BASED INFECTION WAVE (REQUIRED)
+
+Malware must spread as a path-based infection wave, not particles.
+
+Implementation rules:
+
+Malware starts at one or more file nodes
+
+Each infected file periodically emits a red infection wave
+
+The wave travels along existing paths between files
+
+The wave is animated moving along the path
+
+When the wave reaches another file:
+
+That file changes state (clean → suspicious → infected)
+
+The file is marked as an active threat
+
+Increasing malware speed must:
+
+Make waves travel faster
+
+Infect more files in less time
+
+Increase the number of red/suspicious files on screen
+
+If malware spread speed increases but nothing visually changes, the implementation is wrong.
+
+4. ANT RESPONSE TO MALWARE (LOGIC REQUIRED)
+
+When malware infects files:
+
+Infected files must increase their anomalyScore
+
+Ants visiting those files must:
+
+Deposit pheromones on the path they used to reach the file
+
+This pheromone acts as a threat report
+
+As more files get infected:
+
+More ants must visibly converge on those regions
+
+This convergence must be emergent, not scripted
+
+5. PHEROMONES MUST BE VISIBLE (NO EXCEPTIONS)
+
+Pheromones must:
+
+Exist ONLY on paths between files
+
+Be deposited when ants detect threats
+
+Evaporate continuously using Rho (ρ)
+
+Visual representation:
+
+Path thickness increases with pheromone concentration
+
+Path color shifts toward red with higher pheromone
+
+Low-pheromone paths must visibly fade
+
+If pheromones are not clearly visible on paths, the simulation fails its goal.
+
+6. AGENT POPULATION MUST BE VISUAL
+
+When the user increases the number of ants:
+
+More ant agents must immediately appear
+
+They must be individually visible
+
+They must participate in path selection
+
+This must be obvious without reading numbers.
+
+7. ACO FORMULA MUST BE CORRECTLY APPLIED
+
+Ant decision rule at each file:
+
+For each connected path:
+
+Pheromone influence = (pheromone ^ alpha)
+
+Heuristic influence = (file.anomalyScore ^ beta)
+
+Multiply the two
+
+Normalize probabilities
+
+Sample next path
+
+Alpha, beta, and rho must not be decorative sliders.
+If changing them does not change behavior, the implementation is invalid.
+
+8. PHEROMONE EVAPORATION (ρ)
+
+Every simulation tick:
+
+Reduce pheromone on ALL paths using rho
+
+Old threat paths must disappear over time
+
+False positives must fade naturally
+
+This must be visually obvious.
+
+9. VISUAL LEGEND (REQUIRED BELOW SIMULATION)
+
+Below the simulation, include a clear legend explaining visuals, for example:
+
+Green file → clean
+
+Yellow file → suspicious
+
+Red file → infected
+
+Red wave on path → malware spreading
+
+Small moving dots → security ants
+
+Thick red path → high pheromone (high threat confidence)
+
+Thin blue path → low pheromone (safe)
+
+This explanation must update with what is shown on screen.
+
+10. FINAL VALIDATION CHECK
+
+The finished simulation must make it obvious that:
+
+Malware spreads along paths
+
+Ants dynamically change routes as parameters change
+
+More malware → more ants converge
+
+Pheromone paths strengthen and fade
+
+Alpha, beta, rho materially change system behavior
+
+If the visualization still looks like random dots moving, the task is not complete.
+
+IMPLEMENT ALL OF THE ABOVE NOW

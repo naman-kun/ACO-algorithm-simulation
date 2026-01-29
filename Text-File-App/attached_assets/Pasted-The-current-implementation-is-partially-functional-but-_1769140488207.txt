@@ -1,0 +1,284 @@
+The current implementation is partially functional but visually unclear and conceptually opaque.
+
+While some parameters change numerical behavior, the simulation does not clearly communicate:
+
+why ants are choosing certain paths
+
+how they are responding to threats
+
+how Alpha, Beta, and Rho actually influence decisions
+
+how this maps to real antivirus logic
+
+You must fix both logic execution and visual explainability.
+
+0. CRITICAL VISIBILITY FIX (NON-NEGOTIABLE)
+
+Problem:
+
+Some file nodes are hidden or clipped in the bottom half of the canvas
+
+Important interactions are occurring off-screen
+
+Fix (REQUIRED):
+
+Ensure ALL file nodes are fully visible at all times
+
+Constrain node placement to visible canvas bounds
+
+If any file cannot be rendered clearly:
+
+Do NOT include it in the simulation
+
+Dynamically scale or reposition layout if needed
+
+Nothing meaningful should happen outside the visible area.
+
+1. MALWARE SPREAD IS STILL NOT CLEAR (MUST FIX)
+
+Problem:
+
+Malware spread is not visually traceable
+
+Viewer cannot point to a specific path and say “infection moved here”
+
+Fix (REQUIRED):
+
+Implement malware as a clearly visible Path-Based Infection Wave:
+
+When a file becomes infected:
+
+Spawn infection waves along its outgoing paths
+
+Each wave must:
+
+Move visibly along the path over time
+
+Be rendered as a red pulse / flowing segment
+
+When the wave reaches another file:
+
+That file transitions state (clean → suspicious → infected)
+
+Increasing malware speed must:
+
+Increase wave speed
+
+Increase number of infected files
+
+Increase visible threat density
+
+If this is not visually obvious, the implementation is incorrect.
+
+2. ANTS MUST EXPLAIN THEIR OWN DECISIONS VISUALLY
+
+Problem:
+
+Ants move along fixed paths, but it is unclear why
+
+Viewer cannot tell what information ants are reacting to
+
+Fix (MANDATORY):
+
+For every ant decision, make the decision factors visually explicit:
+
+When an ant chooses a path:
+
+Briefly highlight the selected path
+
+When pheromone influences a decision:
+
+Path glow or thickness must visibly bias choice
+
+When anomaly (infection) influences a decision:
+
+Infected or suspicious files must visibly “pull” ants toward them
+
+The viewer must be able to see the decision being made.
+
+3. ALPHA (α) MUST VISIBLY CONTROL MEMORY
+
+Problem:
+
+Increasing alpha does not clearly change behavior
+
+Fix:
+
+Apply alpha exactly as:
+
+pheromoneInfluence = pheromone ^ alpha
+
+
+Visual expectations:
+
+Alpha ≈ 0 → ants explore broadly, paths remain thin
+
+Alpha high → ants strongly reuse existing pheromone paths
+
+High-pheromone paths must become obvious “highways”
+
+When alpha is adjusted live:
+
+Ant routing must change immediately
+
+Path dominance must visibly shift
+
+4. BETA (β) MUST VISIBLY CONTROL THREAT RESPONSE
+
+Problem:
+
+Beta does not clearly redirect ants toward threats
+
+Fix:
+
+Apply beta exactly as:
+
+heuristicInfluence = anomalyScore ^ beta
+
+
+Visual expectations:
+
+Low beta → ants behave mostly exploratively
+
+High beta → ants aggressively reroute toward infected files
+
+When beta changes during runtime:
+
+Ant paths must visibly reorient toward threats
+
+This must look like real-time threat prioritization, not random motion.
+
+5. ACO FORMULA MUST DIRECTLY SHAPE WHAT IS SEEN
+
+Problem:
+
+ACO math may exist but does not explain the visuals
+
+Fix (MANDATORY):
+
+For each ant decision:
+
+Compute a score for every possible path using:
+
+pheromone ^ alpha
+
+anomalyScore ^ beta
+
+Normalize probabilities
+
+Sample path
+
+Then visually reinforce the outcome:
+
+Paths chosen more often must:
+
+Gain pheromone faster
+
+Become thicker and more saturated
+
+Rarely chosen paths must fade
+
+The simulation should be readable even without reading code.
+
+6. PHEROMONES MUST BE OBVIOUS AND MEANINGFUL
+
+Problem:
+
+Pheromones exist but are not clearly legible
+
+Fix:
+
+Pheromones must exist ONLY on paths
+
+When ants detect threats:
+
+Deposit strong, visible pheromone
+
+Scale visuals non-linearly:
+
+Small pheromone → barely visible
+
+Large pheromone → thick, intense path
+
+Rho (ρ) must:
+
+Evaporate pheromones every tick
+
+Visibly erase outdated or false paths
+
+Make forgetting obvious
+
+7. SHOW ACTIVE RESPONSE, NOT STATIC PATHS
+
+Problem:
+
+Paths exist but it is unclear how the system is “responding”
+
+Fix:
+
+Make the system visibly adaptive:
+
+As threats grow:
+
+More ants must converge
+
+Pheromone paths must reorganize
+
+As threats fade:
+
+Paths must weaken and disappear
+
+Ants must redistribute
+
+This must look like live adaptation, not pre-drawn routing.
+
+8. EXPLICIT CYBERSECURITY INTERPRETATION (REQUIRED)
+
+Visually and textually communicate that:
+
+Ants = decentralized security agents
+
+Pheromones = shared threat intelligence
+
+Infected files = compromised resources
+
+Path reinforcement = correlated threat confidence
+
+This should resemble how modern antivirus systems prioritize and adapt, not static graph traversal.
+
+9. UPDATED VISUAL LEGEND (REQUIRED BELOW SIMULATION)
+
+Below the simulation, clearly explain:
+
+Red moving pulse → malware infection wave
+
+Red file → infected
+
+Yellow file → suspicious
+
+Green file → clean
+
+Small moving dots → security agents
+
+Thick red path → high pheromone (high threat confidence)
+
+Thin blue/grey path → low pheromone (forgotten / safe)
+
+This explanation must directly match what is rendered.
+
+10. FINAL VALIDATION RULE
+
+The final simulation must allow a viewer to answer, by sight alone:
+
+Where is the malware spreading?
+
+Why are ants choosing these paths?
+
+How did alpha, beta, and rho change behavior?
+
+How is the system adapting in real time?
+
+If these answers are not visually obvious, the implementation is incomplete.
+
+APPLY ALL FIXES ABOVE NOW
+END OF PROMPT

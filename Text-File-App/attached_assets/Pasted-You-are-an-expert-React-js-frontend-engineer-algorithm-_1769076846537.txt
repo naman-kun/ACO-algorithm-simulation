@@ -1,0 +1,243 @@
+You are an expert React.js frontend engineer, algorithm designer, and simulation engineer.
+
+Your task is to build a fully functional, client-side React.js web application that visually and interactively demonstrates Ant Colony Optimization (ACO) applied to cybersecurity / antivirus threat detection.
+
+This must be a serious educational simulation, not a toy or animation.
+
+1. TECH STACK (MANDATORY)
+
+Framework: React.js
+
+Build tool: Vite or Create React App
+
+Language: JavaScript (no TypeScript)
+
+Rendering: HTML5 Canvas
+
+State management: React hooks only
+
+Backend: NONE
+
+Libraries:
+
+Optional: d3-force only for graph layout
+
+No animation libraries
+
+No AI APIs
+
+No backend services
+
+Everything must run entirely in the browser.
+
+2. CORE CONCEPT
+
+Simulate a computer network as a graph:
+
+Nodes represent computers or servers
+
+Edges represent network connections
+
+Ants represent lightweight security agents
+
+Pheromones represent threat confidence on edges
+
+Malware represents abnormal behavior spreading in the network
+
+Ants do not detect malware directly.
+They only respond to local anomalies.
+
+Optimization must emerge from collective behavior.
+
+3. ANT COLONY OPTIMIZATION MODEL (REQUIRED)
+
+Ant movement must follow the Ant Colony Optimization rule:
+
+Ants prefer edges with:
+
+Higher pheromone values (τ)
+
+Higher heuristic anomaly scores (η)
+
+Decision influence parameters:
+
+Alpha (α): controls influence of pheromone memory
+
+Beta (β): controls influence of real-time heuristic information
+
+Movement probability must depend on both τ and η and be normalized across neighbors.
+
+4. PHEROMONE EVAPORATION (ρ)
+
+Implement continuous pheromone evaporation:
+
+Rho (ρ) controls evaporation rate
+
+High ρ → fast forgetting
+
+Low ρ → long memory
+
+Evaporation must:
+
+Reduce false positives
+
+Prevent permanent bias
+
+Allow adaptation to new attacks
+
+5. MALWARE & ANOMALY MODEL
+
+Introduce malware at random nodes
+
+Malware causes:
+
+Increased traffic
+
+Repeated access attempts
+
+Elevated anomaly scores
+
+Malware spreads probabilistically to neighbors
+
+Antivirus response isolates highly suspicious regions
+
+6. USER-CONTROLLABLE PARAMETERS (REQUIRED UI)
+
+Create sliders or inputs for:
+
+Basic Controls
+
+Number of ants
+
+Simulation speed
+
+Malware spread rate
+
+Antivirus aggressiveness
+
+ACO Parameters
+
+Alpha (α): pheromone influence (range 0–5)
+
+Beta (β): heuristic influence (range 0–5)
+
+Rho (ρ): evaporation rate (range 0.0–1.0)
+
+Changes must take effect immediately.
+
+7. VISUAL REQUIREMENTS
+Nodes
+
+Green: normal
+
+Yellow: suspicious
+
+Red: infected
+
+Pulsing effect for active malware
+
+Edges
+
+Thickness = pheromone strength
+
+Color gradient from blue (safe) to red (threat)
+
+Gradual fading for evaporation
+
+Ants
+
+Small moving dots
+
+Random exploration initially
+
+Increasing bias over time
+
+8. SIMULATION FLOW
+
+Generate network graph
+
+Spawn ants
+
+Start normal traffic
+
+Trigger malware
+
+Spread anomalies
+
+Ants reinforce suspicious paths
+
+Evaporation removes false positives
+
+System converges on infected regions
+
+9. COMPONENT STRUCTURE (REQUIRED)
+
+App.jsx
+
+SimulationCanvas.jsx
+
+ControlPanel.jsx
+
+acoLogic.js
+
+networkGenerator.js
+
+10. EDUCATIONAL CONTENT (REQUIRED)
+
+Include an on-page explanation section that clearly explains:
+
+What Ant Colony Optimization is
+
+What Alpha, Beta, and Rho control
+
+Why evaporation is critical
+
+How this maps to real cybersecurity concepts
+
+Why decentralized detection matters
+
+Tone must be technical, clear, and educational.
+
+11. COMPARISON MODE (HIGHLY RECOMMENDED)
+
+Add a toggle:
+
+ACO Enabled
+
+ACO Disabled (random or greedy movement)
+
+Allow users to visually compare failure vs convergence.
+
+12. IMPLEMENTATION RULES
+
+Fixed timestep simulation loop
+
+No hardcoded outcomes
+
+No fake AI logic
+
+Deterministic where possible
+
+Clear separation of logic and rendering
+
+13. FINAL EXPECTATION
+
+The finished website should clearly demonstrate:
+
+Emergent intelligence
+
+Optimization over time
+
+Sensitivity to parameters
+
+Applicability to cybersecurity and antivirus systems
+
+This should be suitable as:
+
+A technical portfolio project
+
+A research demonstration
+
+An educational visualization
+
+START BUILDING THE APPLICATION NOW

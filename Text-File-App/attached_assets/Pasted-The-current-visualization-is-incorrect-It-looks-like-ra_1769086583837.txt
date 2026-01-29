@@ -1,0 +1,229 @@
+The current visualization is incorrect.
+It looks like random particles moving between points with no spatial or semantic meaning.
+
+You must rebuild the simulation as a true 2D coordinate-based system where every element has clear meaning and interaction.
+
+1. CORE CHANGE (NON-NEGOTIABLE)
+
+Replace the current particle-style visualization with a 2D Cartesian coordinate system rendered on an HTML5 Canvas.
+
+This is a spatial simulation, not a particle animation.
+
+2. 2D WORLD MODEL (MUST IMPLEMENT)
+Canvas Space
+
+Use a fixed 2D plane (x, y)
+
+All objects must exist at real coordinates
+
+Movement must interpolate smoothly in space
+
+3. ENTITIES IN THE SIMULATION
+📄 Files (Static Points)
+
+Represent files or resources in a system
+
+Fixed positions on the 2D plane
+
+States:
+
+Green → clean
+
+Yellow → suspicious
+
+Red → infected
+
+Once malware reaches a file, its state changes immediately
+
+☣️ Malware (Spreading Agent)
+
+Malware starts at one or more files
+
+Spreads spatially over time
+
+Can:
+
+Move toward nearby files
+
+Infect files upon contact
+
+Visualized as:
+
+Expanding red influence
+
+Or moving red agents
+
+🐜 Digital Ants (Security Agents)
+
+Ants move continuously in 2D space
+
+Each ant has:
+
+Current position
+
+Target file
+
+Short-term memory
+
+Ants choose which file to visit next using Ant Colony Optimization
+
+4. ANT DECISION LOGIC (VERY IMPORTANT)
+
+Ants choose paths between files based on:
+
+Pheromone level on paths between files
+
+Heuristic signal (how suspicious or infected a file is)
+
+Movement choice must be influenced by:
+
+Alpha (α): pheromone influence
+
+Beta (β): heuristic influence
+
+Ants must:
+
+Prefer paths leading to suspicious or infected files
+
+Still explore randomly early on
+
+5. PHEROMONE SYSTEM (PATH-BASED)
+
+Pheromones exist on paths between files, not randomly
+
+When an ant detects:
+
+A suspicious file
+
+An infected file
+
+It deposits pheromone on the path it used
+
+Other ants:
+
+Sense pheromones
+
+Bias future movement toward those paths
+
+6. PHEROMONE COMMUNICATION (REPORTING THREATS)
+
+This is critical:
+
+Ants do NOT communicate directly
+
+They communicate ONLY through pheromones
+
+Pheromones act as:
+
+Threat reports
+
+Collective memory
+
+When malware infects a file:
+
+Ants reaching it increase pheromone intensity
+
+This attracts more ants
+
+The response intensifies automatically
+
+7. PHEROMONE EVAPORATION (ρ)
+
+All pheromones must evaporate over time
+
+Controlled by Rho (ρ)
+
+This ensures:
+
+False alarms fade
+
+Old threats are forgotten
+
+System remains adaptive
+
+8. SYSTEM RESPONSE (ANTIVIRUS ACTION)
+
+When pheromone concentration near a file exceeds a threshold:
+
+Antivirus response triggers:
+
+Quarantine the file
+
+Reduce malware spread probability
+
+Visually indicate containment (outline, shield, dimming malware)
+
+9. VISUAL REQUIREMENTS (STRICT)
+Files
+
+Circles at fixed coordinates
+
+Color-coded by state
+
+Labelled optionally
+
+Malware
+
+Red spreading influence
+
+Or red agents moving between files
+
+Ants
+
+Small moving dots
+
+Smooth path-following
+
+Clearly moving from file to file
+
+Paths
+
+Draw faint lines between files
+
+Thickness/color represents pheromone strength
+
+10. WHAT THIS MUST VISUALLY SHOW
+
+Over time, the viewer must clearly see:
+
+Malware spreading through the system
+
+Ants discovering infected files
+
+Pheromone paths strengthening toward threats
+
+Other ants following those paths
+
+Antivirus response intensifying where needed
+
+False alarms disappearing
+
+This must look like adaptive defense, not random motion.
+
+11. REMOVE / AVOID
+
+Random particle motion
+
+Non-spatial animations
+
+Abstract counters without visual cause
+
+Ants teleporting
+
+Pheromones without visible paths
+
+12. FINAL GOAL
+
+The finished visualization should make it obvious, even to a non-expert, that:
+
+Malware spreads spatially
+
+Ants detect and report threats indirectly
+
+Paths adapt over time
+
+Collective intelligence emerges
+
+Ant Colony Optimization is actually being used
+
+REBUILD THE SIMULATION ACCORDINGLY

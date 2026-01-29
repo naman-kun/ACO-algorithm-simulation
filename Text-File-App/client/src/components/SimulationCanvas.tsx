@@ -29,29 +29,35 @@ export function SimulationCanvas({
 
     const { network, ants, infectionWaves } = simulationState;
 
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
     network.edges.forEach(edge => {
       const source = network.nodes[edge.source];
       const target = network.nodes[edge.target];
+      
+      if (!source || !target) return;
 
       ctx.beginPath();
       ctx.moveTo(source.x, source.y);
       ctx.lineTo(target.x, target.y);
 
       if (showPheromones) {
-        const intensity = Math.min(1, edge.pheromone / 20);
-        const widthVal = 3 + intensity * 35;
+        const normalizedPheromone = Math.min(1, edge.pheromone / 50);
+        const smoothIntensity = Math.pow(normalizedPheromone, 0.7);
+        const widthVal = 2 + smoothIntensity * 20;
         
-        const r = Math.floor(0 + intensity * 255);
-        const g = Math.floor(180 * (1 - intensity) + 40);
-        const b = Math.floor(255 * (1 - intensity));
+        const r = Math.floor(smoothIntensity * 220);
+        const g = Math.floor(180 * (1 - smoothIntensity) + 60);
+        const b = Math.floor(255 * (1 - smoothIntensity * 0.8));
         
-        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.1 + intensity * 0.8})`;
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.15 + smoothIntensity * 0.6})`;
         ctx.lineWidth = widthVal;
         ctx.stroke();
 
-        if (intensity > 0.3) {
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${intensity * 0.25})`;
-          ctx.lineWidth = widthVal + 12;
+        if (smoothIntensity > 0.4) {
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${smoothIntensity * 0.15})`;
+          ctx.lineWidth = widthVal + 8;
           ctx.stroke();
         }
       } else {
@@ -61,43 +67,67 @@ export function SimulationCanvas({
       }
     });
 
+    ctx.shadowBlur = 0;
+    
     infectionWaves.forEach(wave => {
       const source = network.nodes[wave.sourceId];
       const target = network.nodes[wave.targetId];
+      
+      if (!source || !target) return;
+      
       const dx = target.x - source.x;
       const dy = target.y - source.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
-      const segmentLen = 20;
-      const startP = Math.max(0, wave.progress - segmentLen/dist);
-      const endP = wave.progress;
+      if (dist < 1) return;
+      
+      const segmentLen = 15;
+      const fadeLen = 8;
+      const startP = Math.max(0, wave.progress - segmentLen / dist);
+      const endP = Math.min(1, wave.progress);
+      const fadeStartP = Math.max(0, startP - fadeLen / dist);
+      
+      const gradient = ctx.createLinearGradient(
+        source.x + dx * fadeStartP,
+        source.y + dy * fadeStartP,
+        source.x + dx * endP,
+        source.y + dy * endP
+      );
+      gradient.addColorStop(0, "rgba(239, 68, 68, 0)");
+      gradient.addColorStop(0.3, "rgba(239, 68, 68, 0.6)");
+      gradient.addColorStop(1, "rgba(239, 68, 68, 0.9)");
       
       ctx.beginPath();
       ctx.moveTo(
-        source.x + dx * startP,
-        source.y + dy * startP
+        source.x + dx * fadeStartP,
+        source.y + dy * fadeStartP
       );
       ctx.lineTo(
         source.x + dx * endP,
         source.y + dy * endP
       );
-      ctx.strokeStyle = "#ef4444";
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 2.5;
       ctx.lineCap = "round";
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "#ef4444";
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = "rgba(239, 68, 68, 0.5)";
       ctx.stroke();
-      ctx.shadowBlur = 0;
     });
 
+    ctx.shadowBlur = 0;
+
     network.nodes.forEach(node => {
+      if (!node) return;
+      
       if (node.type === 'infected') {
-        const time = Date.now() / 400;
-        const radius = 10 + (time % 1) * 40;
+        const time = Date.now() / 500;
+        const pulsePhase = time % 1;
+        const radius = 12 + pulsePhase * 30;
+        const alpha = (1 - pulsePhase) * 0.4;
         ctx.beginPath();
         ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(239, 68, 68, ${1 - (time % 1)})`;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = `rgba(239, 68, 68, ${alpha})`;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
@@ -110,41 +140,40 @@ export function SimulationCanvas({
         ctx.beginPath();
         ctx.arc(node.x, node.y, 15, -Math.PI/2, (Math.PI * 2 * (node.health / 100)) - Math.PI/2);
         ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       }
 
-      ctx.fillStyle = "white";
-      ctx.font = "bold 10px monospace";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.font = "bold 9px monospace";
       ctx.textAlign = "center";
       ctx.fillText(
         `F-${node.id.toString(16)}`,
         node.x,
-        node.y + 28
+        node.y + 26
       );
     });
 
     if (showAnts) {
       ants.forEach(ant => {
+        if (!Number.isFinite(ant.x) || !Number.isFinite(ant.y)) return;
+        
         ctx.fillStyle = "#ffffff";
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = "#ffffff";
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
         ctx.beginPath();
-        ctx.arc(ant.x, ant.y, 4, 0, Math.PI * 2);
+        ctx.arc(ant.x, ant.y, 3.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
 
         if (ant.decisionHighlightTimer > 0) {
+          const progress = 1 - ant.decisionHighlightTimer;
+          const radius = 8 * progress;
+          const alpha = ant.decisionHighlightTimer * 1.5;
           ctx.beginPath();
-          ctx.arc(
-            ant.x,
-            ant.y,
-            10 * (1 - ant.decisionHighlightTimer),
-            0,
-            Math.PI * 2
-          );
-          ctx.strokeStyle = `rgba(255, 255, 255, ${ant.decisionHighlightTimer * 2})`;
-          ctx.lineWidth = 2;
+          ctx.arc(ant.x, ant.y, radius, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, alpha)})`;
+          ctx.lineWidth = 1.5;
           ctx.stroke();
         }
       });

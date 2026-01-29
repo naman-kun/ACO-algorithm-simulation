@@ -1,0 +1,98 @@
+I want you to carefully review and improve the logic of my ACO (Ant Colony Optimization)–based cyber-defense simulation, focusing on correctness, stability, and visual smoothness, without changing the overall architecture or UI layout.
+
+Follow these steps in order and explain briefly what you are doing at each step before applying changes.
+
+⸻
+
+STEP 1: REVIEW CORE ACO LOGIC
+• Locate the core ACO logic file (likely under lib/acoLogic.ts, lib/acoSimulation.ts, or similar).
+• Verify that the ACO model correctly implements:
+	•	Pheromone deposition
+	•	Pheromone evaporation (rho)
+	•	Alpha (α) influence on pheromone memory
+	•	Beta (β) influence on heuristic / urgency
+• Confirm that pheromone values are:
+	•	Bounded (not growing infinitely)
+	•	Properly evaporated each tick
+	•	Updated consistently per iteration / frame
+
+If pheromone values can explode or decay too fast, normalize or clamp them safely and explain why.
+
+⸻
+
+STEP 2: VERIFY PARAMETER REACTIVITY (LIVE UPDATES)
+• Check how alpha, beta, rho, malwareSpreadRate, simulationSpeed, and agentCount are applied.
+• Ensure that when these parameters change via sliders:
+	•	The simulation immediately reflects the change
+	•	No stale closures or outdated references are used
+	•	The simulation instance (simRef or equivalent) is updated safely without re-creating the entire simulation unnecessarily
+
+If any parameters require reinitialization vs live mutation, clearly separate those cases.
+
+⸻
+
+STEP 3: REVIEW INFECTION PROPAGATION LOGIC
+• Verify that infection spread:
+	•	Follows edge connectivity correctly
+	•	Uses probabilities that make sense mathematically
+	•	Does not infect nodes multiple times in the same tick
+• Ensure that infection waves respect simulation speed and time delta, not raw frame rate.
+
+If time-based scaling is missing, add it.
+
+⸻
+
+STEP 4: REVIEW ANT DECISION LOGIC
+• Check how ants choose paths:
+	•	Ensure probability calculation correctly combines pheromone^alpha and heuristic^beta
+	•	Confirm normalization of probabilities
+• Ensure ants do not bias permanently toward early paths unless reinforced by real infection signals.
+
+Explain any corrections made.
+
+⸻
+
+STEP 5: SMOOTH THE RED INFECTION PATH VISUAL
+• Locate the canvas rendering logic for infection waves (the red path or segment drawn between nodes).
+• Make the following visual improvements:
+	•	Slightly reduce the line thickness so it looks less harsh
+	•	Add rounded line caps (round) if not already present
+	•	Add subtle alpha blending so edges fade smoothly instead of ending abruptly
+	•	Ensure the red glow does not overpower pheromone paths
+
+The goal is a smooth, organic infection flow, not a sharp laser-like line.
+
+⸻
+
+STEP 6: ENSURE VISUALS SCALE WITH PARAMETERS
+• Confirm that increasing or decreasing simulation speed:
+	•	Speeds up / slows down infection waves smoothly
+	•	Does not cause jitter or skipped frames
+• Ensure pheromone thickness scales gradually, not in sudden jumps.
+
+Apply easing or interpolation if necessary.
+
+⸻
+
+STEP 7: FINAL CONSISTENCY CHECK
+• Verify that:
+	•	No NaN or undefined values can propagate into the simulation
+	•	State updates do not cause unnecessary re-renders
+	•	The simulation remains stable when parameters are pushed to extreme values
+
+Add minimal defensive guards only where necessary.
+
+⸻
+
+IMPORTANT CONSTRAINTS
+• Do NOT change UI layout or styling outside of the infection wave smoothing
+• Do NOT remove existing features
+• Do NOT add new UI elements
+• Prefer small, safe logic fixes over large refactors
+
+⸻
+
+FINAL OUTPUT
+After completing the changes:
+• Briefly summarize what logic issues were found and fixed
+• Confirm that the simulation now reacts smoothly and predictably to live parameter changes

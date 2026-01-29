@@ -17,6 +17,12 @@ import { Play, Pause, RefreshCw, Trash2, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { InsertSimulationPreset } from "@shared/schema";
 
+interface CycleAnalytics {
+  totalInfections: number;
+  threatsNeutralized: number;
+  efficiency: number;
+}
+
 export default function Dashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPheromones, setShowPheromones] = useState(true);
@@ -32,9 +38,11 @@ export default function Dashboard() {
   const simRef = useRef<ACOSimulation | null>(null);
   const frameRef = useRef<number>(0);
   const [simState, setSimState] = useState<SimulationState | null>(null);
+  const [cycleAnalytics, setCycleAnalytics] = useState<CycleAnalytics | null>(null);
+  const wasPlayingRef = useRef(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dims, setDims] = useState({ w: 800, h: 600 });
+  const [dims, setDims] = useState({ w: 800, h: 500 });
 
   const { data: presets } = usePresets();
   const createPreset = useCreatePreset();
@@ -47,13 +55,17 @@ export default function Dashboard() {
     if (!containerRef.current) return;
   
     const w = containerRef.current.clientWidth;
-    const h = containerRef.current.clientHeight;
+    const h = 500;
   
-    console.log("container height", h);
     setDims({ w, h });
+    setCycleAnalytics(null);
   }, []);
+
   useEffect(() => {
     initSimulation();
+    const handleResize = () => initSimulation();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [initSimulation]);
 
   useEffect(() => {
@@ -94,6 +106,14 @@ export default function Dashboard() {
       simRef.current.setPopulation(antCount);
     }
   }, [alpha, beta, rho, simSpeed, malwareRate, antCount]);
+
+  useEffect(() => {
+    if (wasPlayingRef.current && !isPlaying && simRef.current) {
+      const analytics = simRef.current.getCycleAnalytics();
+      setCycleAnalytics(analytics);
+    }
+    wasPlayingRef.current = isPlaying;
+  }, [isPlaying]);
 
   useEffect(() => {
     let lastTime = performance.now();
@@ -143,17 +163,25 @@ export default function Dashboard() {
     setTimeout(initSimulation, 100);
   };
 
+  const handleStartStop = () => {
+    if (!isPlaying && simRef.current) {
+      simRef.current.resetCycleAnalytics();
+      setCycleAnalytics(null);
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   return (
     <div className="h-screen bg-[#020617] text-white flex flex-col overflow-hidden font-sans">
       <Header onSave={() => setIsSaveOpen(true)} />
       
-      <div className="flex-1 flex flex-col relative bg-black overflow-y-auto overflow-x-hidden">
-        <aside className="w-full lg:w-80 border-r border-white/10 bg-black/40 flex flex-col overflow-hidden">
+      <div className="flex-1 flex overflow-hidden">
+        <aside className="w-80 border-r border-white/10 bg-black/40 flex flex-col shrink-0">
           <div className="p-4 border-b border-white/10">
             <h2 className="text-xs font-mono uppercase tracking-widest text-primary font-bold mb-4">Command Center</h2>
             <div className="flex gap-2">
               <Button 
-                onClick={() => setIsPlaying(!isPlaying)} 
+                onClick={handleStartStop} 
                 className={`flex-1 font-bold ${isPlaying ? "bg-amber-500 hover:bg-amber-600" : "bg-primary hover:bg-primary/90"} text-black`}
                 size="sm"
               >
@@ -197,19 +225,18 @@ export default function Dashboard() {
           </ScrollArea>
         </aside>
 
-        <div className="flex-1 flex flex-col relative bg-black overflow-hidden min-h-0">
-          <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 z-20">
+        <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-black">
+          <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
             <MetricCard label="Threat Vectors" value={simState?.stats.infectedNodes || 0} unit="ACTIVE" color={simState?.stats.infectedNodes ? "destructive" : "primary"} />
             <MetricCard label="Signal" value={simState?.stats.totalPheromones.toFixed(0) || 0} unit="INT" color="secondary" />
             <MetricCard label="Infection Rate" value={simState?.stats.infectionRate || 0} unit="%" color={(simState?.stats.infectionRate ?? 0) > 30 ? "destructive" : "warning"} />
-            <MetricCard label="Efficiency" value={simState?.stats.agentEfficiency || 0} unit="%" color="primary" />
-            <MetricCard label="Integrity" value={simState?.stats.systemHealth || 100} unit="%" color="primary" />
             <MetricCard label="Cycle" value={Math.floor(frameRef.current / 60)} unit="SEC" color="warning" />
           </div>
 
           <div
-          ref={containerRef}
-          className="relative bg-black flex-1 min-h-[600px]"
+            ref={containerRef}
+            className="relative bg-black shrink-0"
+            style={{ height: dims.h }}
           >
             {simState && (
               <SimulationCanvas 
@@ -217,7 +244,7 @@ export default function Dashboard() {
                 showPheromones={showPheromones}
                 showAnts={showAnts}
                 width={dims.w}
-                height={dims.h} // Adjusted for larger legend
+                height={dims.h}
               />
             )}
             
@@ -232,48 +259,122 @@ export default function Dashboard() {
             )}
           </div>
 
-          <div className="border-t border-white/10 bg-black/60 backdrop-blur-xl z-20 shrink-0">
-            <Tabs defaultValue="theory" className="h-full flex flex-col">
+          {cycleAnalytics && !isPlaying && (
+            <div className="p-4 border-t border-primary/20 bg-black/80 shrink-0">
+              <h3 className="text-xs font-mono uppercase tracking-widest text-primary font-bold mb-4">Cycle Analytics Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="border border-white/10 bg-white/5 rounded p-4">
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground">Total Infections</div>
+                  <div className="text-2xl font-bold text-red-500">{cycleAnalytics.totalInfections}</div>
+                </div>
+                <div className="border border-white/10 bg-white/5 rounded p-4">
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground">Threats Neutralized</div>
+                  <div className="text-2xl font-bold text-green-500">{cycleAnalytics.threatsNeutralized}</div>
+                </div>
+                <div className="border border-white/10 bg-white/5 rounded p-4">
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground">Algorithm Efficiency</div>
+                  <div className="text-2xl font-bold text-primary">{cycleAnalytics.efficiency.toFixed(1)}%</div>
+                </div>
+              </div>
+              <div className="text-[10px] font-mono text-muted-foreground border border-white/10 bg-white/5 rounded p-3">
+                <span className="text-primary font-bold">Efficiency Formula:</span> Efficiency = (Threats Neutralized / Total Threat Events) × 100
+              </div>
+            </div>
+          )}
+
+          <div className="bg-black/95 border-t border-primary/20 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[10px] font-mono shrink-0">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+                <span className="text-white font-bold">CLEAN RESOURCE</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded-full bg-[#f59e0b] shadow-[0_0_8px_#f59e0b]" />
+                <span className="text-white font-bold">SUSPICIOUS ANOMALY</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]" />
+                <span className="text-white font-bold">INFECTED NODE</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="h-2 w-8 bg-red-500 shadow-[0_0_8px_red] rounded-full" />
+                <span className="text-white font-bold">INFECTION WAVE (MALWARE)</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_white]" />
+                <span className="text-white font-bold">SECURITY AGENT (ANT)</span>
+              </div>
+              <div className="flex items-center gap-3 text-muted-foreground leading-tight italic">
+                <span>Agents reorganize paths in real-time based on shared intelligence (Pheromones).</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="h-1 w-8 bg-cyan-500/50" />
+                <span className="text-white font-bold">THIN PATH: LOW THREAT</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="h-3 w-8 bg-red-600 shadow-[0_0_10px_red]" />
+                <span className="text-white font-bold">THICK PATH: HIGH THREAT CONFIDENCE</span>
+              </div>
+              <div className="flex items-center gap-3 text-muted-foreground leading-tight italic">
+                <span>Alpha (α) scales memory; Beta (β) scales response urgency.</span>
+              </div>
+            </div>
+
+            <div className="border-l border-white/10 pl-6 space-y-2">
+              <h4 className="text-primary font-bold uppercase tracking-widest text-[9px]">Cyber-Defense mapping</h4>
+              <p className="text-white/60 leading-relaxed">
+                <span className="text-primary font-bold">Ants:</span> Decentralized security agents.<br/>
+                <span className="text-primary font-bold">Pheromones:</span> Shared threat intelligence.<br/>
+                <span className="text-primary font-bold">Path Reinforcement:</span> Correlated threat confidence.
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 bg-black/60 shrink-0">
+            <Tabs defaultValue="theory" className="flex flex-col">
               <TabsList className="bg-transparent border-b border-white/5 rounded-none h-10 px-4">
                 <TabsTrigger value="presets" className="text-[10px] uppercase font-mono tracking-widest data-[state=active]:text-primary">Registry</TabsTrigger>
                 <TabsTrigger value="theory" className="text-[10px] uppercase font-mono tracking-widest data-[state=active]:text-primary">Operational Logic</TabsTrigger>
               </TabsList>
-              <ScrollArea className="flex-1">
-                <TabsContent value="presets" className="p-4 m-0 grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {presets?.map((p: any) => (
-                    <div key={p.id} className="group flex items-center justify-between p-3 border border-white/5 bg-white/5 rounded hover:border-primary/40 cursor-pointer transition-all" onClick={() => loadPreset(p)}>
-                      <div>
-                        <div className="text-[10px] font-bold text-primary uppercase">{p.name}</div>
-                        <div className="text-[9px] text-muted-foreground mt-1">α:{p.alpha} β:{p.beta} ρ:{p.rho}</div>
-                      </div>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive" onClick={(e) => { e.stopPropagation(); deletePreset.mutate(p.id); }}>
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </TabsContent>
-                <TabsContent value="theory" className="p-4 m-0">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-[11px] leading-relaxed text-muted-foreground">
+              <TabsContent value="presets" className="p-4 m-0 grid grid-cols-1 md:grid-cols-3 gap-3">
+                {presets?.map((p: any) => (
+                  <div key={p.id} className="group flex items-center justify-between p-3 border border-white/5 bg-white/5 rounded hover:border-primary/40 cursor-pointer transition-all" onClick={() => loadPreset(p)}>
                     <div>
-                      <span className="text-primary font-bold block mb-1">STIGMERGY (α)</span>
-                      Ants communicate indirectly via pheromone trails. High Alpha forces agents to reinforce discovered paths, leading to rapid system-wide consensus on threat locations.
+                      <div className="text-[10px] font-bold text-primary uppercase">{p.name}</div>
+                      <div className="text-[9px] text-muted-foreground mt-1">α:{p.alpha} β:{p.beta} ρ:{p.rho}</div>
                     </div>
-                    <div>
-                      <span className="text-secondary font-bold block mb-1">LOCAL SEARCH (β)</span>
-                      Heuristic visibility. High Beta allows agents to prioritize immediate node-level anomalies, effectively acting as high-sensitivity local sensors.
-                    </div>
-                    <div>
-                      <span className="text-white font-bold block mb-1">DECAY (ρ)</span>
-                      Evaporation prevents permanent bias. It allows the system to "forget" old threats and false positives, ensuring detection remains adaptive and current.
-                    </div>
+                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive" onClick={(e) => { e.stopPropagation(); deletePreset.mutate(p.id); }}>
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
                   </div>
-                </TabsContent>
-              </ScrollArea>
+                ))}
+              </TabsContent>
+              <TabsContent value="theory" className="p-4 m-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-[11px] leading-relaxed text-muted-foreground">
+                  <div>
+                    <span className="text-primary font-bold block mb-1">STIGMERGY (α)</span>
+                    Ants communicate indirectly via pheromone trails. High Alpha forces agents to reinforce discovered paths, leading to rapid system-wide consensus on threat locations.
+                  </div>
+                  <div>
+                    <span className="text-secondary font-bold block mb-1">LOCAL SEARCH (β)</span>
+                    Heuristic visibility. High Beta allows agents to prioritize immediate node-level anomalies, effectively acting as high-sensitivity local sensors.
+                  </div>
+                  <div>
+                    <span className="text-white font-bold block mb-1">DECAY (ρ)</span>
+                    Evaporation prevents permanent bias. It allows the system to "forget" old threats and false positives, ensuring detection remains adaptive and current.
+                  </div>
+                </div>
+              </TabsContent>
             </Tabs>
           </div>
         </div>
-        </div>
-      
+      </div>
 
       <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>
         <DialogContent className="bg-[#020617] border-white/10 text-white sm:max-w-md">

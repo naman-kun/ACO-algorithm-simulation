@@ -22,11 +22,39 @@ export interface Network {
 
 export function generateNetwork(nodeCount: number, width: number, height: number): Promise<Network> {
   return new Promise((resolve) => {
-    const nodes: any[] = Array.from({ length: nodeCount }, (_, i) => ({
-      id: i,
-      type: "normal",
-      health: 100,
-    }));
+    const padding = 80;
+    const usableWidth = width - padding * 2;
+    const usableHeight = height - padding * 2;
+    const minDistance = 60;
+
+    const nodes: any[] = [];
+    
+    for (let i = 0; i < nodeCount; i++) {
+      let x: number, y: number;
+      let attempts = 0;
+      const maxAttempts = 100;
+      
+      do {
+        x = padding + Math.random() * usableWidth;
+        y = padding + Math.random() * usableHeight;
+        attempts++;
+      } while (
+        attempts < maxAttempts &&
+        nodes.some(n => {
+          const dx = n.x - x;
+          const dy = n.y - y;
+          return Math.sqrt(dx * dx + dy * dy) < minDistance;
+        })
+      );
+
+      nodes.push({
+        id: i,
+        x,
+        y,
+        type: "normal",
+        health: 100,
+      });
+    }
 
     const links: { source: number; target: number }[] = [];
     for (let i = 1; i < nodeCount; i++) {
@@ -41,16 +69,14 @@ export function generateNetwork(nodeCount: number, width: number, height: number
       }
     }
 
-    const padding = 60;
     const simulation = forceSimulation(nodes)
-      .force("charge", forceManyBody().strength(-600))
+      .force("charge", forceManyBody().strength(-400))
       .force("center", forceCenter(width / 2, height / 2))
-      .force("link", forceLink(links).id((d: any) => d.id).distance(100))
+      .force("link", forceLink(links).id((d: any) => d.id).distance(80))
       .stop();
 
     for (let i = 0; i < 300; ++i) simulation.tick();
 
-    // Critical: Constrain to visible bounds
     const finalNodes: Node[] = nodes.map((n: any) => ({
       id: n.id,
       x: Math.max(padding, Math.min(width - padding, n.x)),

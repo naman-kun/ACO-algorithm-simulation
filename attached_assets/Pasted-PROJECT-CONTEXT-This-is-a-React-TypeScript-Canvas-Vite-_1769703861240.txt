@@ -1,0 +1,151 @@
+PROJECT CONTEXT
+This is a React + TypeScript + Canvas (Vite) project called CyberAnt Defense (ACO Threat Simulation).
+The main simulation is rendered in SimulationCanvas.tsx.
+The dashboard layout is controlled from the main Dashboard component.
+The ACO logic lives in acoLogic.ts.
+
+⸻
+
+OBJECTIVES
+You must complete ALL tasks below step by step.
+
+⸻
+
+	1.	FIX LAYOUT: SIMULATION CANVAS VISIBILITY AND LEGEND PLACEMENT
+
+Problem:
+The legend is overlapping the simulation canvas.
+The simulation canvas is not fully visible.
+The right side of the UI is not scrollable.
+The simulation feels vertically cramped.
+
+Required behavior:
+The right panel must be vertically scrollable.
+The simulation canvas must occupy the full width and available height below the top stat cards.
+The legend must be moved below the simulation canvas instead of overlapping it.
+The Stigmergy, Local Search, and Decay explanation sections must appear after scrolling.
+
+Implementation instructions:
+In the main dashboard layout file, wrap the entire right panel inside a scrollable container using vertical overflow.
+Remove any absolute or fixed positioning that forces the legend to sit on top of the canvas.
+The layout order on the right side must be:
+	•	Top stat cards (Threat Vectors, Signal, Infection Rate, Cycle only)
+	•	Simulation Canvas (fully visible, no overlap)
+	•	Legend section
+	•	Registry / Operational Logic section
+	•	Stigmergy, Local Search, and Decay explanations
+
+The simulation canvas height must dynamically fill the available space below the top stat cards and must not shrink when scrolling.
+
+⸻
+
+	2.	REMOVE UNNECESSARY UI ELEMENTS
+
+Remove these completely from the UI and logic:
+	•	Integrity box (top stats row)
+	•	Live Efficiency box (top stats row)
+
+These elements must be deleted from JSX, removed from layout spacing, and removed from any live-updating logic if present.
+
+⸻
+
+	3.	IMPROVE SIMULATION SPATIAL DISTRIBUTION
+
+Problem:
+Nodes sometimes cluster or align too tightly, making paths hard to read.
+
+Required fix:
+Improve the initial node distribution so that nodes are evenly spread across the full simulation canvas area.
+Nodes must not concentrate in a single horizontal band.
+Respect padding so nodes do not collide with UI boundaries.
+
+Implementation guidance:
+Adjust the node initialization logic so x values span the full canvas width and y values span the full canvas height (minus safe margins).
+Apply a simple minimum-distance constraint between nodes so they do not overlap or cluster excessively.
+
+⸻
+
+	4.	MAKE THE RIGHT PANEL PROPERLY SCROLLABLE
+
+Requirements:
+The user must be able to scroll to see:
+	•	Legend
+	•	Registry / Operational Logic
+	•	Stigmergy (alpha) explanation
+	•	Local Search (beta) explanation
+	•	Decay (rho) explanation
+
+No content should be clipped or hidden.
+The simulation canvas must remain fully visible above the legend and not collapse.
+
+⸻
+
+	5.	ADD END-OF-CYCLE ANALYTICS (NEW FEATURE)
+
+When the simulation is stopped or a cycle ends, display a summary panel below the simulation that shows:
+	•	Total number of files infected during the cycle
+	•	Algorithm efficiency percentage
+	•	The exact formula used to calculate efficiency
+
+Efficiency formula (must be displayed):
+Efficiency equals Threats Neutralized divided by Total Threat Events multiplied by 100.
+
+Definitions:
+Threat Events = total number of infection waves created.
+Threats Neutralized = number of infected files restored to normal.
+
+Implementation steps:
+Track infection events and resolved infections inside acoLogic.ts.
+Reset these counters at the start of each simulation cycle.
+Compute efficiency when the simulation stops.
+Display the results in a post-simulation summary panel below the canvas (not in the top stats row).
+
+⸻
+
+	6.	SIMULATION CANVAS VISUAL IMPROVEMENTS
+
+Ensure the simulation canvas:
+	•	Is fully visible without overlap
+	•	Has sufficient vertical space for paths to be clearly traced
+	•	Does not overlap the legend or UI
+	•	Maintains the existing visual style and theme
+
+Do not change ACO logic unless required for spacing or metrics.
+
+⸻
+
+	7.	SUMMARY OF REQUIRED CHANGES
+
+Remove:
+	•	Integrity stat box
+	•	Live efficiency stat box
+
+Add:
+	•	Scrollable right panel
+	•	Post-cycle analytics summary
+	•	Efficiency formula explanation
+	•	Proper layout separation between canvas and legend
+
+⸻
+
+	8.	CONSTRAINTS
+
+Do not redesign the UI theme.
+Do not remove legend content.
+Do not alter ACO behavior except where necessary for analytics.
+Keep all changes clean, minimal, and well-commented.
+
+⸻
+
+EXPECTED FINAL RESULT
+
+A clean, scrollable UI.
+A fully visible and spacious simulation canvas.
+Legend and explanations placed below the canvas.
+Clear, readable node and path distribution.
+Meaningful post-cycle performance analytics.
+No overlapping UI elements.
+
+⸻
+
+END OF INSTRUCTIONS

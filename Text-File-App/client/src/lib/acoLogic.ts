@@ -26,8 +26,8 @@ export interface SimulationState {
     infectedNodes: number;
     totalPheromones: number;
     systemHealth: number;
-    infectionRate: number; // New: Percentage of nodes infected
-    agentEfficiency: number; // New: Successful detections vs total moves
+    infectionRate: number;
+    agentEfficiency: number;
   };
 }
 
@@ -42,9 +42,12 @@ export class ACOSimulation {
   private nextWaveId = 0;
   private totalMoves = 0;
   private detections = 0;
-  // --- Cooperative repair tracking ---
   private repairContributors: Map<number, Set<number>> = new Map();
-  private repairThreshold = 4; // minimum ants required to repair a node
+  private repairThreshold = 4;
+
+  private cycleInfectionEvents = 0;
+  private cycleThreatsNeutralized = 0;
+
   constructor(network: Network, antCount: number) {
     this.state = {
       network,
@@ -57,6 +60,22 @@ export class ACOSimulation {
         infectionRate: 0,
         agentEfficiency: 0,
       }
+    };
+  }
+
+  resetCycleAnalytics() {
+    this.cycleInfectionEvents = 0;
+    this.cycleThreatsNeutralized = 0;
+  }
+
+  getCycleAnalytics() {
+    const efficiency = this.cycleInfectionEvents > 0 
+      ? (this.cycleThreatsNeutralized / this.cycleInfectionEvents) * 100 
+      : 0;
+    return {
+      totalInfections: this.cycleInfectionEvents,
+      threatsNeutralized: this.cycleThreatsNeutralized,
+      efficiency
     };
   }
 
@@ -182,19 +201,16 @@ this.state.network.edges[edgeIndex].pheromone += deposit;
   
       const neighbor = this.state.network.nodes[neighborId];
   
-      // Heuristic: how "dangerous" this node is
       const anomaly =
         neighbor.type === "infected" ? 10 :
         neighbor.type === "suspicious" ? 4 :
         0.3;
   
-      // ACO core formula (exaggerated for visibility)
       const pheromoneInfluence = Math.pow(edge.pheromone + 1, this.alpha * 1.5);
       const heuristicInfluence = Math.pow(anomaly + 1, this.beta * 1.2);
   
       let score = pheromoneInfluence * heuristicInfluence;
   
-      // Discourage immediate backtracking (but don't forbid it)
       if (ant.pathHistory.includes(neighborId)) {
         score *= 0.05;
       }
@@ -203,24 +219,21 @@ this.state.network.edges[edgeIndex].pheromone += deposit;
       return { neighborId, score };
     });
   
-    // Pure exploration fallback
     if (totalScore === 0) {
       const randomChoice = neighbors[Math.floor(Math.random() * neighbors.length)];
       ant.decisionHighlightTimer = 0.4;
       return randomChoice;
     }
   
-    // Probabilistic selection
     let r = Math.random() * totalScore;
     for (const s of scored) {
       r -= s.score;
       if (r <= 0) {
-        ant.decisionHighlightTimer = 0.4; // 🔥 MARK DECISION
+        ant.decisionHighlightTimer = 0.4;
         return s.neighborId;
       }
     }
   
-    // Fallback
     ant.decisionHighlightTimer = 0.4;
     return scored[0].neighborId;
   }
@@ -233,6 +246,7 @@ this.state.network.edges[edgeIndex].pheromone += deposit;
         const idx = Math.floor(Math.random() * this.state.network.nodes.length);
         this.state.network.nodes[idx].type = 'infected';
         this.state.network.nodes[idx].health = 0;
+        this.cycleInfectionEvents++;
       }
     }
 
@@ -270,16 +284,16 @@ this.state.network.edges[edgeIndex].pheromone += deposit;
       if (wave.progress >= 1) {
         const targetNode = this.state.network.nodes[wave.targetId];
   
-        // 🔴 Infection state change
         if (targetNode.type === 'normal') {
           targetNode.type = 'suspicious';
           targetNode.health = 60;
+          this.cycleInfectionEvents++;
         } else if (targetNode.type === 'suspicious') {
           targetNode.type = 'infected';
           targetNode.health = 0;
+          this.cycleInfectionEvents++;
         }
   
-        // 🔥 FIX 4: Spike pheromones on all connected edges
         targetNode.connections.forEach(neighborId => {
           const edge = this.findEdge(targetNode.id, neighborId);
           if (edge) {
@@ -287,7 +301,7 @@ this.state.network.edges[edgeIndex].pheromone += deposit;
           }
         });
   
-        return false; // remove wave
+        return false;
       }
   
       return true;
@@ -305,7 +319,10 @@ this.state.network.edges[edgeIndex].pheromone += deposit;
       if (pheromoneLoad > 15 && (node.type === 'infected' || node.type === 'suspicious')) {
         const repairRate = (pheromoneLoad * 2.5) * dt;
         node.health = Math.min(100, node.health + repairRate);
-        if (node.health > 95) node.type = 'normal';
+        if (node.health > 95) {
+          this.cycleThreatsNeutralized++;
+          node.type = 'normal';
+        }
         else if (node.health > 0) node.type = 'suspicious';
       }
     });

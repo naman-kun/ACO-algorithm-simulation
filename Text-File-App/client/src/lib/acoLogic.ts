@@ -8,7 +8,7 @@ export interface Ant {
   targetNode: number | null;
   progress: number;
   pathHistory: number[];
-  decisionHighlightTimer: number; 
+  decisionHighlightTimer: number;
 }
 
 export interface InfectionWave {
@@ -40,7 +40,7 @@ export class ACOSimulation {
   beta: number = 2.0;
   rho: number = 0.1;
   simulationSpeed: number = 1.0;
-  malwareSpreadRate: number = 0.05;
+  malwareSpreadRate: number = 0.15;
 
   private nextWaveId = 0;
   private totalMoves = 0;
@@ -50,7 +50,7 @@ export class ACOSimulation {
 
   private cycleInfectionEvents = 0;
   private cycleThreatsNeutralized = 0;
-  
+
   private activeWaveTargets: Set<string> = new Set();
 
   constructor(network: Network, antCount: number) {
@@ -74,8 +74,8 @@ export class ACOSimulation {
   }
 
   getCycleAnalytics() {
-    const efficiency = this.cycleInfectionEvents > 0 
-      ? (this.cycleThreatsNeutralized / this.cycleInfectionEvents) * 100 
+    const efficiency = this.cycleInfectionEvents > 0
+      ? (this.cycleThreatsNeutralized / this.cycleInfectionEvents) * 100
       : 0;
     return {
       totalInfections: this.cycleInfectionEvents,
@@ -114,9 +114,9 @@ export class ACOSimulation {
   update(dt: number) {
     const clampedDt = Math.max(0, Math.min(dt, 0.1));
     const adjustedDt = clampedDt * this.simulationSpeed;
-    
+
     if (!Number.isFinite(adjustedDt) || adjustedDt <= 0) return;
-    
+
     this.evaporatePheromones(adjustedDt);
     this.moveAnts(adjustedDt);
     this.processInfectionWaves(adjustedDt);
@@ -133,17 +133,17 @@ export class ACOSimulation {
   private evaporatePheromones(dt: number) {
     const evaporation = Math.exp(-this.rho * dt);
     let total = 0;
-  
+
     this.state.network.edges.forEach(edge => {
       edge.pheromone = this.clampPheromone(edge.pheromone * evaporation);
       total += edge.pheromone;
     });
-  
+
     this.state.stats.totalPheromones = total;
   }
 
   private moveAnts(dt: number) {
-    const baseSpeed = 160; 
+    const baseSpeed = 160;
 
     this.state.ants.forEach(ant => {
       if (ant.decisionHighlightTimer > 0) {
@@ -161,25 +161,25 @@ export class ACOSimulation {
       } else {
         const source = this.state.network.nodes[ant.currentNode];
         const target = this.state.network.nodes[ant.targetNode];
-        
+
         if (!source || !target) {
           ant.targetNode = null;
           return;
         }
-        
+
         const dx = target.x - source.x;
         const dy = target.y - source.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (dist < 1) {
           ant.currentNode = ant.targetNode;
           ant.targetNode = null;
           ant.progress = 0;
           return;
         }
-        
+
         ant.progress += (baseSpeed * dt) / dist;
-        
+
         const clampedProgress = Math.min(1, ant.progress);
         ant.x = source.x + dx * clampedProgress;
         ant.y = source.y + dy * clampedProgress;
@@ -188,15 +188,23 @@ export class ACOSimulation {
           const edgeIndex = this.findEdgeIndex(ant.currentNode, ant.targetNode);
           if (edgeIndex !== -1) {
             const targetNode = this.state.network.nodes[ant.targetNode];
-            
+
+            targetNode.visitCount = (targetNode.visitCount || 0) + 1;
+            if (targetNode.visitCount >= 30 && (targetNode.type === 'infected' || targetNode.type === 'suspicious')) {
+              targetNode.type = 'normal';
+              targetNode.health = 100;
+              targetNode.visitCount = 0;
+              this.cycleThreatsNeutralized++;
+            }
+
             if (targetNode.type !== 'normal') {
               this.detections++;
             }
 
             const deposit =
               targetNode.type === 'infected' ? 8 :
-              targetNode.type === 'suspicious' ? 4 :
-              0.15;
+                targetNode.type === 'suspicious' ? 4 :
+                  0.15;
 
             this.state.network.edges[edgeIndex].pheromone = this.clampPheromone(
               this.state.network.edges[edgeIndex].pheromone + deposit
@@ -218,45 +226,45 @@ export class ACOSimulation {
   private chooseNextNode(ant: Ant): number | null {
     const node = this.state.network.nodes[ant.currentNode];
     if (!node) return null;
-    
+
     const neighbors = node.connections;
     if (neighbors.length === 0) return null;
-  
+
     let totalScore = 0;
-  
+
     const scored = neighbors.map(neighborId => {
       const edge = this.findEdge(ant.currentNode, neighborId);
       if (!edge) return { neighborId, score: 0 };
-  
+
       const neighbor = this.state.network.nodes[neighborId];
       if (!neighbor) return { neighborId, score: 0 };
-  
+
       const anomaly =
         neighbor.type === "infected" ? 10 :
-        neighbor.type === "suspicious" ? 4 :
-        0.5;
-  
+          neighbor.type === "suspicious" ? 4 :
+            0.5;
+
       const pheromoneInfluence = Math.pow(edge.pheromone + 0.1, this.alpha);
       const heuristicInfluence = Math.pow(anomaly + 0.1, this.beta);
-  
+
       let score = pheromoneInfluence * heuristicInfluence;
-  
+
       if (!Number.isFinite(score)) score = 0;
-  
+
       if (ant.pathHistory.includes(neighborId)) {
         score *= 0.1;
       }
-  
+
       totalScore += score;
       return { neighborId, score };
     });
-  
+
     if (totalScore === 0 || !Number.isFinite(totalScore)) {
       const randomChoice = neighbors[Math.floor(Math.random() * neighbors.length)];
       ant.decisionHighlightTimer = 0.4;
       return randomChoice;
     }
-  
+
     let r = Math.random() * totalScore;
     for (const s of scored) {
       r -= s.score;
@@ -265,24 +273,25 @@ export class ACOSimulation {
         return s.neighborId;
       }
     }
-  
+
     ant.decisionHighlightTimer = 0.4;
     return scored[0].neighborId;
   }
 
   private spreadMalware(dt: number) {
     if (this.state.network.nodes.every(n => n.type === 'normal')) {
-      if (Math.random() < 0.15 * dt) {
+      if (Math.random() < 0.8 * dt) {
         const idx = Math.floor(Math.random() * this.state.network.nodes.length);
         this.state.network.nodes[idx].type = 'infected';
         this.state.network.nodes[idx].health = 0;
+        this.state.network.nodes[idx].visitCount = 0;
         this.cycleInfectionEvents++;
       }
     }
 
     this.state.network.nodes.forEach(node => {
       if (node.type === 'infected') {
-        const emitChance = this.malwareSpreadRate * dt * 6;
+        const emitChance = this.malwareSpreadRate * dt * 20;
         if (Math.random() < emitChance) {
           node.connections.forEach(neighborId => {
             const targetNode = this.state.network.nodes[neighborId];
@@ -305,41 +314,43 @@ export class ACOSimulation {
   }
 
   private processInfectionWaves(dt: number) {
-    const waveSpeed = 180;
-  
+    const waveSpeed = 300;
+
     this.state.infectionWaves = this.state.infectionWaves.filter(wave => {
       const source = this.state.network.nodes[wave.sourceId];
       const target = this.state.network.nodes[wave.targetId];
-      
+
       if (!source || !target) {
         this.activeWaveTargets.delete(`${wave.sourceId}-${wave.targetId}`);
         return false;
       }
-      
+
       const dx = target.x - source.x;
       const dy = target.y - source.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-  
+
       if (dist < 1) {
         this.activeWaveTargets.delete(`${wave.sourceId}-${wave.targetId}`);
         return false;
       }
-  
+
       wave.progress += (waveSpeed * dt) / dist;
-  
+
       if (wave.progress >= 1) {
         const targetNode = this.state.network.nodes[wave.targetId];
-  
+
         if (targetNode.type === 'normal') {
           targetNode.type = 'suspicious';
           targetNode.health = 60;
+          targetNode.visitCount = 0;
           this.cycleInfectionEvents++;
         } else if (targetNode.type === 'suspicious') {
           targetNode.type = 'infected';
           targetNode.health = 0;
+          targetNode.visitCount = 0;
           this.cycleInfectionEvents++;
         }
-  
+
         targetNode.connections.forEach(neighborId => {
           const edge = this.findEdge(targetNode.id, neighborId);
           if (edge) {
@@ -348,11 +359,11 @@ export class ACOSimulation {
             );
           }
         });
-  
+
         this.activeWaveTargets.delete(`${wave.sourceId}-${wave.targetId}`);
         return false;
       }
-  
+
       return true;
     });
   }
@@ -377,13 +388,13 @@ export class ACOSimulation {
   }
 
   private findEdge(a: number, b: number): Edge | undefined {
-    return this.state.network.edges.find(e => 
+    return this.state.network.edges.find(e =>
       (e.source === a && e.target === b) || (e.source === b && e.target === a)
     );
   }
 
   private findEdgeIndex(a: number, b: number): number {
-    return this.state.network.edges.findIndex(e => 
+    return this.state.network.edges.findIndex(e =>
       (e.source === a && e.target === b) || (e.source === b && e.target === a)
     );
   }
@@ -392,11 +403,11 @@ export class ACOSimulation {
     const totalNodes = this.state.network.nodes.length;
     const infected = this.state.network.nodes.filter(n => n.type === 'infected').length;
     const suspicious = this.state.network.nodes.filter(n => n.type === 'suspicious').length;
-    
+
     this.state.stats.infectedNodes = infected + suspicious;
     this.state.stats.systemHealth = Math.round((1 - infected / totalNodes) * 100);
     this.state.stats.infectionRate = Math.round(((infected + suspicious) / totalNodes) * 100);
-    
+
     const efficiency = this.totalMoves > 0 ? (this.detections / this.totalMoves) * 100 : 0;
     this.state.stats.agentEfficiency = Math.round(efficiency);
   }

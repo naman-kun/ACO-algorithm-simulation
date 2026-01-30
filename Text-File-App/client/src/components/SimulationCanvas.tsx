@@ -9,12 +9,12 @@ interface SimulationCanvasProps {
   height: number;
 }
 
-export function SimulationCanvas({ 
-  simulationState, 
-  showPheromones, 
+export function SimulationCanvas({
+  simulationState,
+  showPheromones,
   showAnts,
-  width, 
-  height 
+  width,
+  height
 }: SimulationCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -35,7 +35,7 @@ export function SimulationCanvas({
     network.edges.forEach(edge => {
       const source = network.nodes[edge.source];
       const target = network.nodes[edge.target];
-      
+
       if (!source || !target) return;
 
       ctx.beginPath();
@@ -46,11 +46,22 @@ export function SimulationCanvas({
         const normalizedPheromone = Math.min(1, edge.pheromone / 50);
         const smoothIntensity = Math.pow(normalizedPheromone, 0.7);
         const widthVal = 2 + smoothIntensity * 20;
-        
-        const r = Math.floor(smoothIntensity * 220);
-        const g = Math.floor(180 * (1 - smoothIntensity) + 60);
-        const b = Math.floor(255 * (1 - smoothIntensity * 0.8));
-        
+
+        // Calculate threat intensity based on connected nodes
+        const threatLevel = (source.type !== 'normal' ? 1 : 0) + (target.type !== 'normal' ? 1 : 0);
+
+        let r, g, b;
+        if (threatLevel === 2) {
+          // High threat (Red)
+          r = 239; g = 68; b = 68;
+        } else if (threatLevel === 1) {
+          // Medium threat (Orange)
+          r = 245; g = 158; b = 11;
+        } else {
+          // Low threat (Cyan)
+          r = 6; g = 182; b = 212;
+        }
+
         ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.15 + smoothIntensity * 0.6})`;
         ctx.lineWidth = widthVal;
         ctx.stroke();
@@ -68,25 +79,25 @@ export function SimulationCanvas({
     });
 
     ctx.shadowBlur = 0;
-    
+
     infectionWaves.forEach(wave => {
       const source = network.nodes[wave.sourceId];
       const target = network.nodes[wave.targetId];
-      
+
       if (!source || !target) return;
-      
+
       const dx = target.x - source.x;
       const dy = target.y - source.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      
+
       if (dist < 1) return;
-      
+
       const segmentLen = 15;
       const fadeLen = 8;
       const startP = Math.max(0, wave.progress - segmentLen / dist);
       const endP = Math.min(1, wave.progress);
       const fadeStartP = Math.max(0, startP - fadeLen / dist);
-      
+
       const gradient = ctx.createLinearGradient(
         source.x + dx * fadeStartP,
         source.y + dy * fadeStartP,
@@ -96,7 +107,7 @@ export function SimulationCanvas({
       gradient.addColorStop(0, "rgba(239, 68, 68, 0)");
       gradient.addColorStop(0.3, "rgba(239, 68, 68, 0.6)");
       gradient.addColorStop(1, "rgba(239, 68, 68, 0.9)");
-      
+
       ctx.beginPath();
       ctx.moveTo(
         source.x + dx * fadeStartP,
@@ -118,7 +129,7 @@ export function SimulationCanvas({
 
     network.nodes.forEach(node => {
       if (!node) return;
-      
+
       if (node.type === 'infected') {
         const time = Date.now() / 500;
         const pulsePhase = time % 1;
@@ -135,10 +146,10 @@ export function SimulationCanvas({
       ctx.arc(node.x, node.y, 11, 0, Math.PI * 2);
       ctx.fillStyle = node.type === 'infected' ? "#ef4444" : (node.type === 'suspicious' ? "#f59e0b" : "#10b981");
       ctx.fill();
-      
+
       if (node.health < 100) {
         ctx.beginPath();
-        ctx.arc(node.x, node.y, 15, -Math.PI/2, (Math.PI * 2 * (node.health / 100)) - Math.PI/2);
+        ctx.arc(node.x, node.y, 15, -Math.PI / 2, (Math.PI * 2 * (node.health / 100)) - Math.PI / 2);
         ctx.strokeStyle = "#ffffff";
         ctx.lineWidth = 2.5;
         ctx.stroke();
@@ -157,7 +168,7 @@ export function SimulationCanvas({
     if (showAnts) {
       ants.forEach(ant => {
         if (!Number.isFinite(ant.x) || !Number.isFinite(ant.y)) return;
-        
+
         ctx.fillStyle = "#ffffff";
         ctx.shadowBlur = 6;
         ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
@@ -182,10 +193,10 @@ export function SimulationCanvas({
   }, [simulationState, showPheromones, showAnts, width, height]);
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      width={width} 
-      height={height} 
+    <canvas
+      ref={canvasRef}
+      width={width}
+      height={height}
       className="w-full h-full block bg-black"
     />
   );

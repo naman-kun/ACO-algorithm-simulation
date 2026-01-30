@@ -1,40 +1,58 @@
 import { Link } from "wouter";
-import { Activity, Share2, Save, Github } from "lucide-react";
+import { Activity, Link2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export function Header({ onSave }: { onSave?: () => void }) {
+  const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    toast({
+      title: "Link Copied",
+      description: "Simulation URL copied to clipboard.",
+    });
+
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 px-6 flex items-center justify-between">
+    <header className="h-20 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 px-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center border border-primary/30">
           <Activity className="w-6 h-6 text-primary animate-pulse" />
         </div>
         <div>
-          <h1 className="text-xl font-bold font-display tracking-tight leading-none text-foreground">
+          <h1 className="text-[22px] font-bold font-display tracking-tight leading-none text-foreground">
             Cyber<span className="text-primary">Ant</span> Defense
           </h1>
           <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
             ACO Threat Simulation v1.0
           </p>
+          <p className="text-[11px] text-primary font-mono tracking-wider mt-0.5">
+            System Design & Development — Naman Shah
+          </p>
         </div>
       </div>
 
       <nav className="flex items-center gap-4">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="hidden md:flex gap-2 font-mono text-xs border-primary/30 hover:bg-primary/10 hover:text-primary"
-          onClick={onSave}
+        <span className="text-[14px] font-mono text-primary uppercase tracking-widest hidden md:block animate-pulse drop-shadow-[0_0_13px_rgba(16,185,129,0.8)]">
+          Support our work by sharing!
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 border-primary/20 hover:bg-primary/10 text-primary font-mono text-xs uppercase tracking-wider transition-all"
+          onClick={handleCopyLink}
         >
-          <Save className="w-4 h-4" />
-          SAVE PRESET
+          {copied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+          {copied ? "Copied" : "Copy Link"}
         </Button>
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-            <Github className="w-5 h-5" />
-          </Button>
-        </a>
       </nav>
     </header>
   );
 }
+

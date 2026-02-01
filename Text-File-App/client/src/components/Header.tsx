@@ -20,7 +20,7 @@ export function Header() {
   };
 
   return (
-    <header className="h-20 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 px-6 flex items-center justify-between">
+    <header className="h-20 border-b border-border bg-[#030712]/90 backdrop-blur-md sticky top-0 z-50 px-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center border border-primary/30">
           <Activity className="w-6 h-6 text-primary animate-pulse" />

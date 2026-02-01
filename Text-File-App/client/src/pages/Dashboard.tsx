@@ -436,7 +436,7 @@ export default function Dashboard() {
           {currentView === "credits" && (
             <div className="h-full overflow-auto bg-black/40">
               <div className="max-w-5xl mx-auto py-12 px-8">
-                <div className="mt-8">
+                <div className="mt-8 border border-orange-500/30 rounded-3xl p-8 bg-white/5">
                   <h4 className="text-xl font-mono font-bold text-orange-500 mb-8 uppercase tracking-widest opacity-90">Credits</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 leading-relaxed">
 

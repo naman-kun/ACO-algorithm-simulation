@@ -190,7 +190,7 @@ export class ACOSimulation {
             const targetNode = this.state.network.nodes[ant.targetNode];
 
             targetNode.visitCount = (targetNode.visitCount || 0) + 1;
-            if (targetNode.visitCount >= 30 && (targetNode.type === 'infected' || targetNode.type === 'suspicious')) {
+            if (targetNode.visitCount >= 40 && (targetNode.type === 'infected' || targetNode.type === 'suspicious')) {
               targetNode.type = 'normal';
               targetNode.health = 100;
               targetNode.visitCount = 0;

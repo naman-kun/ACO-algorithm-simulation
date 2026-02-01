@@ -89,10 +89,10 @@ export function ResearchSources() {
     return (
         <div className="grid grid-cols-1 gap-8 p-8 max-w-5xl mx-auto">
             {RESEARCH_DATA.map((category, catIndex) => (
-                <Card key={catIndex} className="bg-black/40 border-primary/20 backdrop-blur-sm">
+                <Card key={catIndex} className="bg-black/40 border-secondary/20 backdrop-blur-sm">
                     <CardHeader className="pb-3 border-b border-white/5">
-                        <CardTitle className="flex items-center gap-3 text-primary text-xl tracking-wide">
-                            <BookOpen className="w-5 h-5 text-primary/80" />
+                        <CardTitle className="flex items-center gap-3 text-secondary text-xl tracking-wide">
+                            <BookOpen className="w-5 h-5 text-secondary/80" />
                             {category.categoryName}
                         </CardTitle>
                     </CardHeader>
@@ -100,10 +100,10 @@ export function ResearchSources() {
                         {category.sources.map((source, index) => (
                             <div
                                 key={index}
-                                className="group flex items-start justify-between gap-4 p-4 rounded-lg bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all duration-300"
+                                className="group flex items-start justify-between gap-4 p-4 rounded-lg bg-white/5 border border-white/5 hover:border-secondary/20 hover:bg-white/10 transition-all duration-300"
                             >
                                 <div className="flex-1">
-                                    <h4 className="text-sm font-bold text-white group-hover:text-primary transition-colors leading-relaxed">
+                                    <h4 className="text-sm font-bold text-white group-hover:text-secondary transition-colors leading-relaxed">
                                         {source.title}
                                     </h4>
                                     {source.citation && (
@@ -118,7 +118,7 @@ export function ResearchSources() {
                                         href={source.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="shrink-0 p-2 rounded-full bg-black/20 text-muted-foreground hover:text-white hover:bg-primary/20 transition-all"
+                                        className="shrink-0 p-2 rounded-full bg-black/20 text-muted-foreground hover:text-white hover:bg-secondary/20 transition-all"
                                     >
                                         <ExternalLink className="w-4 h-4" />
                                     </a>

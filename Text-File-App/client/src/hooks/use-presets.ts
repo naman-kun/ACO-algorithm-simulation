@@ -19,7 +19,7 @@ export function usePresets() {
 export function useCreatePreset() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
   return useMutation({
     mutationFn: async (data: InsertSimulationPreset) => {
       const validated = api.presets.create.input.parse(data);
@@ -29,7 +29,7 @@ export function useCreatePreset() {
         body: JSON.stringify(validated),
         credentials: "include",
       });
-      
+
       if (!res.ok) {
         if (res.status === 400) {
           const error = api.presets.create.responses[400].parse(await res.json());

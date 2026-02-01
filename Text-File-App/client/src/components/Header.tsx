@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
-export function Header({ onSave }: { onSave?: () => void }) {
+export function Header() {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
@@ -26,13 +26,10 @@ export function Header({ onSave }: { onSave?: () => void }) {
           <Activity className="w-6 h-6 text-primary animate-pulse" />
         </div>
         <div>
-          <h1 className="text-[22px] font-bold font-display tracking-tight leading-none text-foreground">
+          <h1 className="text-[28px] font-bold font-display tracking-tight leading-none text-foreground">
             Cyber<span className="text-primary">Ant</span> Defense
           </h1>
-          <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
-            ACO Threat Simulation v1.0
-          </p>
-          <p className="text-[11px] text-primary font-mono tracking-wider mt-0.5">
+          <p className="text-[13px] text-primary font-mono tracking-wider mt-0.5">
             System Design & Development — Naman Shah
           </p>
         </div>

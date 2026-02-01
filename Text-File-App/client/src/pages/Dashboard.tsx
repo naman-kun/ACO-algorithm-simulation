@@ -7,7 +7,7 @@ import { MetricCard } from "@/components/MetricCard";
 import { PresentationViewer } from "@/components/PresentationViewer";
 import { ResearchSources } from "@/components/ResearchSources";
 import { Header } from "@/components/Header";
-import { usePresets, useCreatePreset, useDeletePreset } from "@/hooks/use-presets";
+
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Play, Pause, RefreshCw, Trash2, Activity, Monitor, FileText, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { InsertSimulationPreset } from "@shared/schema";
+
 
 type ViewMode = "simulation" | "presentation" | "research";
 
@@ -49,11 +49,6 @@ export default function Dashboard() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({ w: 800, h: 500 });
 
-  const { data: presets } = usePresets();
-  const createPreset = useCreatePreset();
-  const deletePreset = useDeletePreset();
-  const [presetName, setPresetName] = useState("");
-  const [isSaveOpen, setIsSaveOpen] = useState(false);
   const { toast } = useToast();
 
   const initSimulation = useCallback(() => {
@@ -137,36 +132,7 @@ export default function Dashboard() {
     return () => cancelAnimationFrame(frameRef.current);
   }, [isPlaying]);
 
-  const handleSavePreset = () => {
-    const preset: InsertSimulationPreset = {
-      name: presetName || `Preset ${new Date().toLocaleTimeString()}`,
-      description: `α:${alpha}, β:${beta}, ρ:${rho}`,
-      alpha,
-      beta,
-      rho,
-      antCount,
-      simulationSpeed: simSpeed,
-      malwareSpreadRate: malwareRate,
-      antivirusAggressiveness: 0.5
-    };
-    createPreset.mutate(preset, {
-      onSuccess: () => {
-        setIsSaveOpen(false);
-        setPresetName("");
-      }
-    });
-  };
 
-  const loadPreset = (p: any) => {
-    setAlpha(p.alpha);
-    setBeta(p.beta);
-    setRho(p.rho);
-    setAntCount(p.antCount);
-    setSimSpeed(p.simulationSpeed);
-    setMalwareRate(p.malwareSpreadRate);
-    toast({ title: "Config Loaded", description: p.name });
-    setTimeout(initSimulation, 100);
-  };
 
   const handleStartStop = () => {
     if (!isPlaying && simRef.current) {
@@ -178,7 +144,7 @@ export default function Dashboard() {
 
   return (
     <div className="h-screen bg-[#020617] text-white flex flex-col overflow-hidden font-sans">
-      <Header onSave={() => setIsSaveOpen(true)} />
+      <Header />
 
       <div className="flex-1 overflow-hidden relative flex flex-col">
         {/* Chrome-like Tab Navigation */}
@@ -415,13 +381,13 @@ export default function Dashboard() {
                         </div>
                         <div className="col-span-1 md:col-span-3 mt-4 pt-6 border-t border-white/10">
                           <span className="text-white font-bold block mb-3 text-base uppercase tracking-widest text-[#f59e0b]">Simulation Overview</span>
-                          <p className="mb-3">
+                          <p className="mb-3 text-lg">
                             Think of this simulation as a digital immune system. Just as ants find the fastest route to food by leaving scent trails (pheromones), our "Cyber Ants" find the fastest route to security threats.
                           </p>
-                          <p className="mb-3">
+                          <p className="mb-3 text-lg">
                             When a node gets "infected" (turns red), ants that find it leave a digital signal. Other ants smell this signal and rush to help, creating a thick, glowing path that alerts the entire network to the danger instantly.
                           </p>
-                          <p>
+                          <p className="text-lg">
                             You are watching <strong>real-time emergent intelligence</strong>. No central computer is telling the ants where to go—they figure it out together, dynamically adapting to new threats as they appear on the screen. It's a powerful live demonstration of how decentralized systems can solve complex security problems faster than a single central controller.
                           </p>
                         </div>
@@ -456,10 +422,9 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* PRESENTATION VIEW */}
           {currentView === "presentation" && (
-            <div className="h-full flex flex-col items-center justify-center p-8 bg-black/40">
-              <div className="w-full max-w-5xl">
+            <div className="h-full overflow-y-auto p-8 bg-black/40">
+              <div className="w-full max-w-5xl mx-auto">
                 <PresentationViewer />
               </div>
             </div>
@@ -477,24 +442,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>
-        <DialogContent className="bg-[#020617] border-white/10 text-white sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xs font-mono uppercase tracking-widest text-primary">Archive Configuration</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <Input
-              placeholder="Preset Designation"
-              value={presetName}
-              onChange={(e) => setPresetName(e.target.value)}
-              className="bg-white/5 border-white/10 h-9 text-xs"
-            />
-            <Button className="w-full bg-primary text-black font-bold h-9" onClick={handleSavePreset} disabled={!presetName || createPreset.isPending}>
-              COMMIT TO REGISTRY
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </div >
   );
 }

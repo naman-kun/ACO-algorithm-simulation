@@ -1,90 +1,140 @@
 import { ExternalLink, BookOpen, ScrollText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// USER INSTRUCTION: Add your research sources here.
-// You can categorize them by type (e.g., "Core Research", "Papers", "Articles").
-interface ResearchItem {
-    title: string;
-    authors: string;
-    publication?: string;
-    description: string;
-    url?: string;
+interface ResearchCategory {
+    categoryName: string;
+    sources: ResearchItem[];
 }
 
-// TODO: Populate this array with your research papers and sources.
-const RESEARCH_SOURCES: ResearchItem[] = [
-    // Example Format (Uncomment and edit to add):
-    /*
+interface ResearchItem {
+    title: string;
+    url?: string;
+    citation?: string;
+}
+
+const RESEARCH_DATA: ResearchCategory[] = [
     {
-      title: "Example Research Paper Title",
-      authors: "Author Name, Co-Author Name",
-      publication: "Journal of Computer Science (2024)",
-      description: "Brief summary of the paper and its relevance to the project...",
-      url: "https://example.com/paper-link"
+        categoryName: "Slime Mold Algorithm Sources",
+        sources: [
+            {
+                title: "ScienceDirect: Slime Mold Algorithm",
+                url: "https://www.sciencedirect.com/science/article/abs/pii/S0167739X19320941"
+            },
+            {
+                title: "PMC: Slime Mold Algorithm Review",
+                url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9838547/"
+            },
+            {
+                title: "ResearchGate: Slime Molds",
+                url: "https://www.researchgate.net/publication/333395590_Slime_Molds"
+            },
+            {
+                title: "MDPI: Sustainability 2021",
+                url: "https://www.mdpi.com/2071-1050/13/11/5831"
+            },
+            {
+                title: "ResearchGate: Slime Molds (Duplicate Reference)",
+                url: "https://www.researchgate.net/publication/333395590_Slime_Molds"
+            },
+            {
+                title: "MDPI: Sustainability 2021 (Duplicate Reference)",
+                url: "https://www.mdpi.com/2071-1050/13/11/5831"
+            },
+            {
+                title: "Journal of Theoretical Biology: Slime Mold Networks",
+                url: "https://doi.org/10.1016/j.jtbi.2006.07.015"
+            },
+            {
+                title: "MDPI: Biomimetics 2024",
+                url: "https://www.mdpi.com/2313-7673/9/1/31"
+            },
+            {
+                title: "Science: Rules of Biologically Inspired Adaptive Network Design",
+                url: "https://www.science.org/doi/10.1126/science.1177894"
+            }
+        ]
     },
-    */
+    {
+        categoryName: "Ant Colony Optimization Algorithm Sources",
+        sources: [
+            {
+                title: "CSA: Ant Colony Optimization Variants",
+                url: "https://doi.org/10.1016/j.csa.2023.100031"
+            },
+            {
+                title: "Hölldobler, Bert, and Edward Osborne Wilson. The Ants.",
+                citation: "Cambridge, Belknap Press Of Harvard University Press, 1990."
+            },
+            {
+                title: "Camazine, Scott, and et al. Self-Organization in Biological Systems.",
+                citation: "Princeton, Princeton University Press, 2003."
+            },
+            {
+                title: "IEEE: ITNG 2011",
+                url: "https://doi.org/10.1109/ITNG.2011.159"
+            },
+            {
+                title: "Atlantis Press Article",
+                url: "https://www.atlantis-press.com/article/55917199.pdf"
+            },
+            {
+                title: "ResearchGate: Slime Mould Algorithm Comprehensive Review",
+                url: "https://www.researchgate.net/publication/366357595_Slime_mould_algorithm_a_comprehensive_review_of_recent_variants_and_application"
+            }
+        ]
+    }
 ];
 
 export function ResearchSources() {
-    const hasSources = RESEARCH_SOURCES.length > 0;
-
-    if (!hasSources) {
-        return (
-            <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-white/10 rounded-lg bg-black/20">
-                <ScrollText className="w-16 h-16 text-muted-foreground/30 mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Research Library</h3>
-                <p className="text-muted-foreground max-w-md">
-                    No research sources have been added yet.
-                </p>
-                <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded text-left text-sm text-muted-foreground">
-                    <p className="font-bold text-primary mb-2">How to add sources:</p>
-                    <p>
-                        Open <code>client/src/components/ResearchSources.tsx</code> and add entries to the <code>RESEARCH_SOURCES</code> array.
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="grid grid-cols-1 gap-6 p-6">
-            <Card className="bg-black/40 border-primary/20">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-primary">
-                        <BookOpen className="w-5 h-5" />
-                        Bibliography & References
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {RESEARCH_SOURCES.map((source, index) => (
-                        <div key={index} className="group p-4 rounded-lg bg-white/5 border border-white/5 hover:border-primary/30 transition-all">
-                            <div className="flex justify-between items-start gap-4">
-                                <div>
-                                    <h4 className="text-lg font-bold text-white group-hover:text-primary transition-colors">
+        <div className="grid grid-cols-1 gap-8 p-8 max-w-5xl mx-auto">
+            {RESEARCH_DATA.map((category, catIndex) => (
+                <Card key={catIndex} className="bg-black/40 border-primary/20 backdrop-blur-sm">
+                    <CardHeader className="pb-3 border-b border-white/5">
+                        <CardTitle className="flex items-center gap-3 text-primary text-xl tracking-wide">
+                            <BookOpen className="w-5 h-5 text-primary/80" />
+                            {category.categoryName}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 space-y-3">
+                        {category.sources.map((source, index) => (
+                            <div
+                                key={index}
+                                className="group flex items-start justify-between gap-4 p-4 rounded-lg bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all duration-300"
+                            >
+                                <div className="flex-1">
+                                    <h4 className="text-sm font-bold text-white group-hover:text-primary transition-colors leading-relaxed">
                                         {source.title}
                                     </h4>
-                                    <div className="text-sm text-primary/80 font-mono mt-1">
-                                        {source.authors} {source.publication && <span className="text-muted-foreground">| {source.publication}</span>}
-                                    </div>
-                                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-                                        {source.description}
-                                    </p>
+                                    {source.citation && (
+                                        <p className="text-xs text-muted-foreground mt-1 font-mono">
+                                            {source.citation}
+                                        </p>
+                                    )}
                                 </div>
+
                                 {source.url && (
                                     <a
                                         href={source.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-white transition-colors"
+                                        className="shrink-0 p-2 rounded-full bg-black/20 text-muted-foreground hover:text-white hover:bg-primary/20 transition-all"
                                     >
                                         <ExternalLink className="w-4 h-4" />
                                     </a>
                                 )}
                             </div>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
+                        ))}
+                    </CardContent>
+                </Card>
+            ))}
+
+            <div className="flex justify-center mt-4">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground bg-black/40 px-4 py-2 rounded-full border border-white/5">
+                    <ScrollText className="w-3 h-3" />
+                    <span>External links open in a new tab</span>
+                </div>
+            </div>
         </div>
     );
 }

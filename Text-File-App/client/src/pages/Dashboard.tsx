@@ -438,23 +438,48 @@ export default function Dashboard() {
               <div className="max-w-5xl mx-auto py-12 px-8">
                 <div className="mt-8">
                   <h4 className="text-xl font-mono font-bold text-orange-500 mb-8 uppercase tracking-widest opacity-90">Credits</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 leading-relaxed">
-                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
-                      <span className="text-2xl text-white font-bold block mb-3">Naman Shah</span>
-                      <span className="text-lg text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 leading-relaxed">
+
+                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
+                      <div className="w-16 h-16 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-8 h-8 text-white/20" />
+                      </div>
+                      <div>
+                        <span className="text-2xl text-white font-bold block mb-2">Naman Shah</span>
+                        <span className="text-base text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
+                      </div>
                     </div>
-                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
-                      <span className="text-2xl text-white font-bold block mb-3">Krish Mehta</span>
-                      <span className="text-lg text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
+
+                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
+                      <div className="w-16 h-16 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-8 h-8 text-white/20" />
+                      </div>
+                      <div>
+                        <span className="text-2xl text-white font-bold block mb-2">Krish Mehta</span>
+                        <span className="text-base text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
+                      </div>
                     </div>
-                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
-                      <span className="text-2xl text-white font-bold block mb-3">Tanish Shah</span>
-                      <span className="text-lg text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
+
+                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
+                      <div className="w-16 h-16 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-8 h-8 text-white/20" />
+                      </div>
+                      <div>
+                        <span className="text-2xl text-white font-bold block mb-2">Tanish Shah</span>
+                        <span className="text-base text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
+                      </div>
                     </div>
-                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
-                      <span className="text-2xl text-white font-bold block mb-3">Shriija Nagrale</span>
-                      <span className="text-lg text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
+
+                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
+                      <div className="w-16 h-16 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-8 h-8 text-white/20" />
+                      </div>
+                      <div>
+                        <span className="text-2xl text-white font-bold block mb-2">Shriija Nagrale</span>
+                        <span className="text-base text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
+                      </div>
                     </div>
+
                   </div>
                 </div>
               </div>

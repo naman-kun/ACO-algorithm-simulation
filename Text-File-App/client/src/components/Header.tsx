@@ -29,9 +29,7 @@ export function Header() {
           <h1 className="text-[28px] font-bold font-display tracking-tight leading-none text-foreground">
             Cyber<span className="text-primary">Ant</span> Defense
           </h1>
-          <p className="text-[13px] text-primary font-mono tracking-wider mt-0.5">
-            System Design & Development — Naman Shah
-          </p>
+
         </div>
       </div>
 

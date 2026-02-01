@@ -196,7 +196,7 @@ export default function Dashboard() {
               relative px-6 py-2 rounded-t-lg text-sm font-bold font-mono tracking-wider transition-all
               flex items-center gap-2
               ${currentView === "credits"
-                ? "bg-primary/10 text-primary border-t border-x border-primary/20 after:absolute after:-bottom-[1px] after:left-0 after:right-0 after:h-[1px] after:bg-black"
+                ? "bg-orange-500/10 text-orange-500 border-t border-x border-orange-500/20 after:absolute after:-bottom-[1px] after:left-0 after:right-0 after:h-[1px] after:bg-black"
                 : "text-muted-foreground hover:bg-white/5 hover:text-white border-t border-x border-transparent"}
             `}
           >
@@ -435,25 +435,25 @@ export default function Dashboard() {
           {/* CREDITS VIEW */}
           {currentView === "credits" && (
             <div className="h-full overflow-auto bg-black/40">
-              <div className="max-w-4xl mx-auto py-8 px-4">
-                <div className="mt-8 pt-8">
-                  <h4 className="text-lg font-mono font-bold text-primary mb-5 uppercase tracking-widest opacity-80">Credits</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 leading-relaxed">
-                    <div>
-                      <span className="text-xl text-white font-bold block mb-2">Naman Shah</span>
-                      <span className="text-base text-muted-foreground block">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
+              <div className="max-w-5xl mx-auto py-12 px-8">
+                <div className="mt-8">
+                  <h4 className="text-xl font-mono font-bold text-orange-500 mb-8 uppercase tracking-widest opacity-90">Credits</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 leading-relaxed">
+                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
+                      <span className="text-2xl text-white font-bold block mb-3">Naman Shah</span>
+                      <span className="text-lg text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
                     </div>
-                    <div>
-                      <span className="text-xl text-white font-bold block mb-2">Krish Mehta</span>
-                      <span className="text-base text-muted-foreground block">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
+                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
+                      <span className="text-2xl text-white font-bold block mb-3">Krish Mehta</span>
+                      <span className="text-lg text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
                     </div>
-                    <div>
-                      <span className="text-xl text-white font-bold block mb-2">Tanish Shah</span>
-                      <span className="text-base text-muted-foreground block">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
+                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
+                      <span className="text-2xl text-white font-bold block mb-3">Tanish Shah</span>
+                      <span className="text-lg text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
                     </div>
-                    <div>
-                      <span className="text-xl text-white font-bold block mb-2">Shriija Nagrale</span>
-                      <span className="text-base text-muted-foreground block">Video References for SMA and ACO.</span>
+                    <div className="border-l-2 border-orange-500/50 pl-6 py-1">
+                      <span className="text-2xl text-white font-bold block mb-3">Shriija Nagrale</span>
+                      <span className="text-lg text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
                     </div>
                   </div>
                 </div>

@@ -461,7 +461,7 @@ export default function Dashboard() {
                           src="/images/krish.jpg"
                           alt="Krish Mehta"
                           className="w-full h-full object-cover scale-100"
-                          style={{ objectPosition: "50% 20%" }}
+                          style={{ objectPosition: "50% 35%" }}
                         />
                       </div>
                       <div>

@@ -457,7 +457,12 @@ export default function Dashboard() {
 
                     <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
                       <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <Users className="w-12 h-12 text-white/20" />
+                        <img
+                          src="/images/krish.jpg"
+                          alt="Krish Mehta"
+                          className="w-full h-full object-cover scale-125"
+                          style={{ objectPosition: "50% 20%" }}
+                        />
                       </div>
                       <div>
                         <span className="text-2xl text-white font-bold block mb-2">Krish Mehta</span>

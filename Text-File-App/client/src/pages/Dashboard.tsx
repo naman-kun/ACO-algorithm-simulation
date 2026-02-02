@@ -461,7 +461,7 @@ export default function Dashboard() {
                           <img
                             src="/images/naman.jpg"
                             alt="Naman Shah"
-                            className="w-full h-full object-cover scale-125"
+                            className="w-full h-full object-cover scale-125 transition-transform duration-500 ease-out hover:scale-[1.35] hover:brightness-110 hover:contrast-125"
                             style={{ objectPosition: "50% 30%" }}
                           />
                         </div>
@@ -476,7 +476,7 @@ export default function Dashboard() {
                           <img
                             src="/images/krish.jpg"
                             alt="Krish Mehta"
-                            className="w-full h-full object-cover scale-100"
+                            className="w-full h-full object-cover scale-100 transition-transform duration-500 ease-out hover:scale-110 hover:brightness-110 hover:contrast-125"
                             style={{ objectPosition: "50% 45%" }}
                           />
                         </div>
@@ -491,7 +491,7 @@ export default function Dashboard() {
                           <img
                             src="/images/tanish.jpg"
                             alt="Tanish Shah"
-                            className="w-full h-full object-cover scale-125"
+                            className="w-full h-full object-cover scale-125 transition-transform duration-500 ease-out hover:scale-[1.35] hover:brightness-110 hover:contrast-125"
                             style={{ objectPosition: "50% 20%" }}
                           />
                         </div>
@@ -502,8 +502,8 @@ export default function Dashboard() {
                       </div>
 
                       <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
-                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                          <Users className="w-16 h-16 text-white/20" />
+                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden group">
+                          <Users className="w-16 h-16 text-white/20 transition-transform duration-500 ease-out group-hover:scale-110" />
                         </div>
                         <div>
                           <span className="text-3xl text-white font-bold block mb-3">Shriija Nagrale</span>

@@ -445,7 +445,7 @@ export default function Dashboard() {
                         <img
                           src="/images/naman.jpg"
                           alt="Naman Shah"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover scale-125"
                           style={{ objectPosition: "50% 30%" }}
                         />
                       </div>

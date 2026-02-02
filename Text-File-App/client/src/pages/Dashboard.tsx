@@ -440,9 +440,9 @@ export default function Dashboard() {
                   <h4 className="text-xl font-mono font-bold text-orange-500 mb-8 uppercase tracking-widest opacity-90">Credits</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 leading-relaxed">
 
-                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
-                      <div className="w-[74px] h-[74px] rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <Users className="w-8 h-8 text-white/20" />
+                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
+                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-12 h-12 text-white/20" />
                       </div>
                       <div>
                         <span className="text-2xl text-white font-bold block mb-2">Naman Shah</span>
@@ -450,9 +450,9 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
-                      <div className="w-[74px] h-[74px] rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <Users className="w-8 h-8 text-white/20" />
+                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
+                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-12 h-12 text-white/20" />
                       </div>
                       <div>
                         <span className="text-2xl text-white font-bold block mb-2">Krish Mehta</span>
@@ -460,12 +460,12 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
-                      <div className="w-[74px] h-[74px] rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
+                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <img
                           src="/images/tanish.jpg"
                           alt="Tanish Shah"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover scale-125"
                           style={{ objectPosition: "50% 20%" }}
                         />
                       </div>
@@ -475,9 +475,9 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="p-6 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-5 items-start">
-                      <div className="w-[74px] h-[74px] rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <Users className="w-8 h-8 text-white/20" />
+                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
+                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-12 h-12 text-white/20" />
                       </div>
                       <div>
                         <span className="text-2xl text-white font-bold block mb-2">Shriija Nagrale</span>

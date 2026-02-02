@@ -7,6 +7,7 @@ import { MetricCard } from "@/components/MetricCard";
 import { PresentationViewer } from "@/components/PresentationViewer";
 import { ResearchSources } from "@/components/ResearchSources";
 import { Header } from "@/components/Header";
+import { ScrollAnimation } from "@/components/ui/ScrollAnimation";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -261,156 +262,166 @@ export default function Dashboard() {
               </aside>
 
               <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-black">
-                <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
-                  <MetricCard label="Threat Vectors" value={simState?.stats.infectedNodes || 0} unit="ACTIVE" color={simState?.stats.infectedNodes ? "destructive" : "primary"} />
-                  <MetricCard label="Signal" value={simState?.stats.totalPheromones.toFixed(0) || 0} unit="INT" color="secondary" />
-                  <MetricCard label="Infection Rate" value={simState?.stats.infectionRate || 0} unit="%" color={(simState?.stats.infectionRate ?? 0) > 30 ? "destructive" : "warning"} />
-                  <MetricCard label="Cycle" value={Math.floor(frameRef.current / 60)} unit="SEC" color="warning" />
-                </div>
+                <ScrollAnimation>
+                  <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
+                    <MetricCard label="Threat Vectors" value={simState?.stats.infectedNodes || 0} unit="ACTIVE" color={simState?.stats.infectedNodes ? "destructive" : "primary"} />
+                    <MetricCard label="Signal" value={simState?.stats.totalPheromones.toFixed(0) || 0} unit="INT" color="secondary" />
+                    <MetricCard label="Infection Rate" value={simState?.stats.infectionRate || 0} unit="%" color={(simState?.stats.infectionRate ?? 0) > 30 ? "destructive" : "warning"} />
+                    <MetricCard label="Cycle" value={Math.floor(frameRef.current / 60)} unit="SEC" color="warning" />
+                  </div>
+                </ScrollAnimation>
 
-                <div
-                  ref={containerRef}
-                  className="relative bg-black shrink-0"
-                  style={{ height: dims.h }}
-                >
-                  {simState && (
-                    <SimulationCanvas
-                      simulationState={simState}
-                      showPheromones={showPheromones}
-                      showAnts={showAnts}
-                      width={dims.w}
-                      height={dims.h}
-                    />
-                  )}
+                <ScrollAnimation delay={0.2}>
+                  <div
+                    ref={containerRef}
+                    className="relative bg-black shrink-0"
+                    style={{ height: dims.h }}
+                  >
+                    {simState && (
+                      <SimulationCanvas
+                        simulationState={simState}
+                        showPheromones={showPheromones}
+                        showAnts={showAnts}
+                        width={dims.w}
+                        height={dims.h}
+                      />
+                    )}
 
-                  {!isPlaying && !simState && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-30">
-                      <div className="text-center p-8 border border-primary/20 bg-black/40 rounded-lg max-w-sm">
-                        <Activity className="w-12 h-12 text-primary mx-auto mb-4 animate-pulse" />
-                        <h2 className="text-xl font-display font-bold uppercase tracking-widest text-white mb-2">Initialize Core</h2>
-                        <p className="text-xs text-muted-foreground leading-relaxed">System ready for deployment. Configure parameters and engage the simulation to begin detection.</p>
+                    {!isPlaying && !simState && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-30">
+                        <div className="text-center p-8 border border-primary/20 bg-black/40 rounded-lg max-w-sm">
+                          <Activity className="w-12 h-12 text-primary mx-auto mb-4 animate-pulse" />
+                          <h2 className="text-xl font-display font-bold uppercase tracking-widest text-white mb-2">Initialize Core</h2>
+                          <p className="text-xs text-muted-foreground leading-relaxed">System ready for deployment. Configure parameters and engage the simulation to begin detection.</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                </ScrollAnimation>
 
                 {cycleAnalytics && (
-                  <div className="p-4 border-t border-primary/20 bg-black/80 shrink-0">
-                    <h3 className="text-xs font-mono uppercase tracking-widest text-primary font-bold mb-4">Cycle Analytics Summary</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div className="border border-white/10 bg-white/5 rounded p-4">
-                        <div className="text-sm font-mono uppercase text-muted-foreground">Total Infections</div>
-                        <div className="text-4xl font-bold text-red-500">{cycleAnalytics.totalInfections}</div>
+                  <ScrollAnimation delay={0.3}>
+                    <div className="p-4 border-t border-primary/20 bg-black/80 shrink-0">
+                      <h3 className="text-xs font-mono uppercase tracking-widest text-primary font-bold mb-4">Cycle Analytics Summary</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="border border-white/10 bg-white/5 rounded p-4">
+                          <div className="text-sm font-mono uppercase text-muted-foreground">Total Infections</div>
+                          <div className="text-4xl font-bold text-red-500">{cycleAnalytics.totalInfections}</div>
+                        </div>
+                        <div className="border border-white/10 bg-white/5 rounded p-4">
+                          <div className="text-sm font-mono uppercase text-muted-foreground">Threats Neutralized</div>
+                          <div className="text-4xl font-bold text-green-500">{cycleAnalytics.threatsNeutralized}</div>
+                        </div>
+                        <div className="border border-white/10 bg-white/5 rounded p-4">
+                          <div className="text-sm font-mono uppercase text-muted-foreground">Algorithm Efficiency</div>
+                          <div className="text-4xl font-bold text-primary">{cycleAnalytics.efficiency.toFixed(1)}%</div>
+                        </div>
                       </div>
-                      <div className="border border-white/10 bg-white/5 rounded p-4">
-                        <div className="text-sm font-mono uppercase text-muted-foreground">Threats Neutralized</div>
-                        <div className="text-4xl font-bold text-green-500">{cycleAnalytics.threatsNeutralized}</div>
-                      </div>
-                      <div className="border border-white/10 bg-white/5 rounded p-4">
-                        <div className="text-sm font-mono uppercase text-muted-foreground">Algorithm Efficiency</div>
-                        <div className="text-4xl font-bold text-primary">{cycleAnalytics.efficiency.toFixed(1)}%</div>
+                      <div className="text-[10px] font-mono text-muted-foreground border border-white/10 bg-white/5 rounded p-3">
+                        <span className="text-primary font-bold">Efficiency Formula:</span> Efficiency = (Threats Neutralized / Total Threat Events) × 100
                       </div>
                     </div>
-                    <div className="text-[10px] font-mono text-muted-foreground border border-white/10 bg-white/5 rounded p-3">
-                      <span className="text-primary font-bold">Efficiency Formula:</span> Efficiency = (Threats Neutralized / Total Threat Events) × 100
-                    </div>
-                  </div>
+                  </ScrollAnimation>
                 )}
 
-                <div className="bg-black/95 border-t border-primary/20 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[13px] font-mono shrink-0">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
-                      <span className="text-white font-bold">CLEAN RESOURCE</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full bg-[#f59e0b] shadow-[0_0_8px_#f59e0b]" />
-                      <span className="text-white font-bold">SUSPICIOUS ANOMALY</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]" />
-                      <span className="text-white font-bold">INFECTED NODE</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-2 w-8 bg-red-500 shadow-[0_0_8px_red] rounded-full" />
-                      <span className="text-white font-bold">INFECTION WAVE (MALWARE)</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_white]" />
-                      <span className="text-white font-bold">SECURITY AGENT (ANT)</span>
-                    </div>
-
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-1 w-8 bg-cyan-500/50" />
-                      <span className="text-white font-bold">THIN PATH: LOW THREAT</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="h-3 w-8 bg-red-600 shadow-[0_0_10px_red]" />
-                      <span className="text-white font-bold">THICK PATH: HIGH THREAT CONFIDENCE</span>
-                    </div>
-
-                  </div>
-
-                  <div className="border-l border-white/10 pl-6 space-y-2">
-                    <h4 className="text-primary font-bold uppercase tracking-widest text-xs">Cyber-Defense mapping</h4>
-                    <p className="text-white/60 leading-relaxed">
-                      <span className="text-primary font-bold">Ants:</span> Decentralized security agents.<br />
-                      <span className="text-primary font-bold">Pheromones:</span> Shared threat intelligence.<br />
-                      <span className="text-primary font-bold">Path Reinforcement:</span> Correlated threat confidence.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="border-t border-white/10 bg-black/60 shrink-0">
-                  <Tabs defaultValue="theory" className="flex flex-col">
-                    <TabsList className="bg-transparent border-b border-white/5 rounded-none h-12 px-4 justify-start">
-                      <TabsTrigger value="theory" className="text-[15px] uppercase font-mono tracking-widest data-[state=active]:text-primary">Operational Logic</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="theory" className="p-4 m-0">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm leading-relaxed text-muted-foreground">
-                        <div>
-                          <span className="text-primary font-bold block mb-2 text-base">HISTORY (α)</span>
-                          Ants communicate indirectly via pheromone trails. High Alpha forces agents to reinforce discovered paths, leading to rapid system-wide consensus on threat locations.
-                          <div className="mt-2 text-base italic opacity-80 border-l-2 border-primary/30 pl-2">
-                            Alpha (α) scales memory; Beta (β) scales response urgency.
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-secondary font-bold block mb-2 text-base">LOCAL SEARCH (β)</span>
-                          Heuristic visibility. High Beta allows agents to prioritize immediate node-level anomalies, effectively acting as high-sensitivity local sensors.
-                          <div className="mt-2 text-base italic opacity-80 border-l-2 border-secondary/30 pl-2">
-                            Agents reorganize paths in real-time based on shared intelligence (Pheromones).
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-white font-bold block mb-2 text-base">DECAY (ρ)</span>
-                          Evaporation prevents permanent bias. It allows the system to "forget" old threats and false positives, ensuring detection remains adaptive and current.
-                        </div>
-                        <div className="col-span-1 md:col-span-3 mt-4 pt-6 border-t border-white/10">
-                          <span className="text-white font-bold block mb-3 text-base uppercase tracking-widest text-[#f59e0b]">Simulation Overview</span>
-                          <p className="mb-3 text-lg">
-                            Think of this simulation as a digital immune system. Just as ants find the fastest route to food by leaving scent trails (pheromones), our "Cyber Ants" find the fastest route to security threats.
-                          </p>
-                          <p className="mb-3 text-lg">
-                            When a node gets "infected" (turns red), ants that find it leave a digital signal. Other ants smell this signal and rush to help, creating a thick, glowing path that alerts the entire network to the danger instantly.
-                          </p>
-                          <p className="text-lg">
-                            You are watching <strong>real-time emergent intelligence</strong>. No central computer is telling the ants where to go—they figure it out together, dynamically adapting to new threats as they appear on the screen. It's a powerful live demonstration of how decentralized systems can solve complex security problems faster than a single central controller.
-                          </p>
-                        </div>
+                <ScrollAnimation delay={0.1}>
+                  <div className="bg-black/95 border-t border-primary/20 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[13px] font-mono shrink-0">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]" />
+                        <span className="text-white font-bold">CLEAN RESOURCE</span>
                       </div>
-                    </TabsContent>
-                  </Tabs>
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full bg-[#f59e0b] shadow-[0_0_8px_#f59e0b]" />
+                        <span className="text-white font-bold">SUSPICIOUS ANOMALY</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]" />
+                        <span className="text-white font-bold">INFECTED NODE</span>
+                      </div>
+                    </div>
 
-                  {/* Credits section removed from here */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-8 bg-red-500 shadow-[0_0_8px_red] rounded-full" />
+                        <span className="text-white font-bold">INFECTION WAVE (MALWARE)</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_white]" />
+                        <span className="text-white font-bold">SECURITY AGENT (ANT)</span>
+                      </div>
 
-                </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-1 w-8 bg-cyan-500/50" />
+                        <span className="text-white font-bold">THIN PATH: LOW THREAT</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-3 w-8 bg-red-600 shadow-[0_0_10px_red]" />
+                        <span className="text-white font-bold">THICK PATH: HIGH THREAT CONFIDENCE</span>
+                      </div>
+
+                    </div>
+
+                    <div className="border-l border-white/10 pl-6 space-y-2">
+                      <h4 className="text-primary font-bold uppercase tracking-widest text-xs">Cyber-Defense mapping</h4>
+                      <p className="text-white/60 leading-relaxed">
+                        <span className="text-primary font-bold">Ants:</span> Decentralized security agents.<br />
+                        <span className="text-primary font-bold">Pheromones:</span> Shared threat intelligence.<br />
+                        <span className="text-primary font-bold">Path Reinforcement:</span> Correlated threat confidence.
+                      </p>
+                    </div>
+                  </div>
+                </ScrollAnimation>
+
+                <ScrollAnimation delay={0.2}>
+                  <div className="border-t border-white/10 bg-black/60 shrink-0">
+                    <Tabs defaultValue="theory" className="flex flex-col">
+                      <TabsList className="bg-transparent border-b border-white/5 rounded-none h-12 px-4 justify-start">
+                        <TabsTrigger value="theory" className="text-[15px] uppercase font-mono tracking-widest data-[state=active]:text-primary">Operational Logic</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="theory" className="p-4 m-0">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm leading-relaxed text-muted-foreground">
+                          <div>
+                            <span className="text-primary font-bold block mb-2 text-base">HISTORY (α)</span>
+                            Ants communicate indirectly via pheromone trails. High Alpha forces agents to reinforce discovered paths, leading to rapid system-wide consensus on threat locations.
+                            <div className="mt-2 text-base italic opacity-80 border-l-2 border-primary/30 pl-2">
+                              Alpha (α) scales memory; Beta (β) scales response urgency.
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-secondary font-bold block mb-2 text-base">LOCAL SEARCH (β)</span>
+                            Heuristic visibility. High Beta allows agents to prioritize immediate node-level anomalies, effectively acting as high-sensitivity local sensors.
+                            <div className="mt-2 text-base italic opacity-80 border-l-2 border-secondary/30 pl-2">
+                              Agents reorganize paths in real-time based on shared intelligence (Pheromones).
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-white font-bold block mb-2 text-base">DECAY (ρ)</span>
+                            Evaporation prevents permanent bias. It allows the system to "forget" old threats and false positives, ensuring detection remains adaptive and current.
+                          </div>
+                          <div className="col-span-1 md:col-span-3 mt-4 pt-6 border-t border-white/10">
+                            <span className="text-white font-bold block mb-3 text-base uppercase tracking-widest text-[#f59e0b]">Simulation Overview</span>
+                            <p className="mb-3 text-lg">
+                              Think of this simulation as a digital immune system. Just as ants find the fastest route to food by leaving scent trails (pheromones), our "Cyber Ants" find the fastest route to security threats.
+                            </p>
+                            <p className="mb-3 text-lg">
+                              When a node gets "infected" (turns red), ants that find it leave a digital signal. Other ants smell this signal and rush to help, creating a thick, glowing path that alerts the entire network to the danger instantly.
+                            </p>
+                            <p className="text-lg">
+                              You are watching <strong>real-time emergent intelligence</strong>. No central computer is telling the ants where to go—they figure it out together, dynamically adapting to new threats as they appear on the screen. It's a powerful live demonstration of how decentralized systems can solve complex security problems faster than a single central controller.
+                            </p>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+
+                    {/* Credits section removed from here */}
+
+                  </div>
+                </ScrollAnimation>
               </div>
             </div>
           )}
@@ -418,7 +429,9 @@ export default function Dashboard() {
           {currentView === "presentation" && (
             <div className="h-full overflow-y-auto p-8 bg-black/40">
               <div className="w-full max-w-5xl mx-auto">
-                <PresentationViewer />
+                <ScrollAnimation>
+                  <PresentationViewer />
+                </ScrollAnimation>
               </div>
             </div>
           )}
@@ -427,7 +440,9 @@ export default function Dashboard() {
           {currentView === "research" && (
             <div className="h-full overflow-auto bg-black/40">
               <div className="max-w-4xl mx-auto py-8">
-                <ResearchSources />
+                <ScrollAnimation>
+                  <ResearchSources />
+                </ScrollAnimation>
               </div>
             </div>
           )}
@@ -436,74 +451,75 @@ export default function Dashboard() {
           {currentView === "credits" && (
             <div className="h-full overflow-auto bg-black/40">
               <div className="max-w-5xl mx-auto py-12 px-8">
-                <div className="mt-8 border border-orange-500/30 rounded-3xl p-8 bg-white/5">
-                  <h4 className="text-2xl font-mono font-bold text-orange-500 mb-10 uppercase tracking-widest opacity-90">Credits</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 leading-relaxed">
+                <ScrollAnimation>
+                  <div className="mt-8 border border-orange-500/30 rounded-3xl p-8 bg-white/5">
+                    <h4 className="text-2xl font-mono font-bold text-orange-500 mb-10 uppercase tracking-widest opacity-90">Credits</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 leading-relaxed">
 
-                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
-                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <img
-                          src="/images/naman.jpg"
-                          alt="Naman Shah"
-                          className="w-full h-full object-cover scale-125"
-                          style={{ objectPosition: "50% 30%" }}
-                        />
+                      <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                          <img
+                            src="/images/naman.jpg"
+                            alt="Naman Shah"
+                            className="w-full h-full object-cover scale-125"
+                            style={{ objectPosition: "50% 30%" }}
+                          />
+                        </div>
+                        <div>
+                          <span className="text-3xl text-white font-bold block mb-3">Naman Shah</span>
+                          <span className="text-lg text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-3xl text-white font-bold block mb-3">Naman Shah</span>
-                        <span className="text-lg text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
+
+                      <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                          <img
+                            src="/images/krish.jpg"
+                            alt="Krish Mehta"
+                            className="w-full h-full object-cover scale-100"
+                            style={{ objectPosition: "50% 45%" }}
+                          />
+                        </div>
+                        <div>
+                          <span className="text-3xl text-white font-bold block mb-3">Krish Mehta</span>
+                          <span className="text-lg text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
+                        </div>
                       </div>
+
+                      <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                          <img
+                            src="/images/tanish.jpg"
+                            alt="Tanish Shah"
+                            className="w-full h-full object-cover scale-125"
+                            style={{ objectPosition: "50% 20%" }}
+                          />
+                        </div>
+                        <div>
+                          <span className="text-3xl text-white font-bold block mb-3">Tanish Shah</span>
+                          <span className="text-lg text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
+                        </div>
+                      </div>
+
+                      <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                          <Users className="w-16 h-16 text-white/20" />
+                        </div>
+                        <div>
+                          <span className="text-3xl text-white font-bold block mb-3">Shriija Nagrale</span>
+                          <span className="text-lg text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
+                        </div>
+                      </div>
+
                     </div>
-
-                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
-                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <img
-                          src="/images/krish.jpg"
-                          alt="Krish Mehta"
-                          className="w-full h-full object-cover scale-100"
-                          style={{ objectPosition: "50% 45%" }}
-                        />
-                      </div>
-                      <div>
-                        <span className="text-3xl text-white font-bold block mb-3">Krish Mehta</span>
-                        <span className="text-lg text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
-                      </div>
-                    </div>
-
-                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
-                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <img
-                          src="/images/tanish.jpg"
-                          alt="Tanish Shah"
-                          className="w-full h-full object-cover scale-125"
-                          style={{ objectPosition: "50% 20%" }}
-                        />
-                      </div>
-                      <div>
-                        <span className="text-3xl text-white font-bold block mb-3">Tanish Shah</span>
-                        <span className="text-lg text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
-                      </div>
-                    </div>
-
-                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
-                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <Users className="w-16 h-16 text-white/20" />
-                      </div>
-                      <div>
-                        <span className="text-3xl text-white font-bold block mb-3">Shriija Nagrale</span>
-                        <span className="text-lg text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
-                      </div>
-                    </div>
-
                   </div>
-                </div>
+                </ScrollAnimation>
               </div>
             </div>
           )}
 
         </div>
       </div>
-
 
     </div >
   );

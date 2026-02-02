@@ -441,7 +441,7 @@ export default function Dashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 leading-relaxed">
 
                     <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <Users className="w-12 h-12 text-white/20" />
                       </div>
                       <div>
@@ -451,7 +451,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <Users className="w-12 h-12 text-white/20" />
                       </div>
                       <div>
@@ -461,7 +461,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <img
                           src="/images/tanish.jpg"
                           alt="Tanish Shah"
@@ -476,7 +476,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-28 h-28 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <Users className="w-12 h-12 text-white/20" />
                       </div>
                       <div>

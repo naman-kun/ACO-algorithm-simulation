@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, FileText, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -60,6 +60,16 @@ function SlideViewer({ title, slides, credits }: SlideViewerProps) {
             setCurrentSlide(currentSlide - 1);
         }
     };
+
+    // Preload images for smoother transitions
+    useEffect(() => {
+        if (!hasSlides) return;
+
+        slides.forEach((slide) => {
+            const img = new Image();
+            img.src = slide;
+        });
+    }, [slides, hasSlides]);
 
     if (!hasSlides) {
         return (

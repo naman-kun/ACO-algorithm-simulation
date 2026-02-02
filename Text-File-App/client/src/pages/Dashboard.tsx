@@ -437,11 +437,11 @@ export default function Dashboard() {
             <div className="h-full overflow-auto bg-black/40">
               <div className="max-w-5xl mx-auto py-12 px-8">
                 <div className="mt-8 border border-orange-500/30 rounded-3xl p-8 bg-white/5">
-                  <h4 className="text-xl font-mono font-bold text-orange-500 mb-8 uppercase tracking-widest opacity-90">Credits</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 leading-relaxed">
+                  <h4 className="text-2xl font-mono font-bold text-orange-500 mb-10 uppercase tracking-widest opacity-90">Credits</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 leading-relaxed">
 
-                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <img
                           src="/images/naman.jpg"
                           alt="Naman Shah"
@@ -450,28 +450,28 @@ export default function Dashboard() {
                         />
                       </div>
                       <div>
-                        <span className="text-2xl text-white font-bold block mb-2">Naman Shah</span>
-                        <span className="text-base text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
+                        <span className="text-3xl text-white font-bold block mb-3">Naman Shah</span>
+                        <span className="text-lg text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
                       </div>
                     </div>
 
-                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <img
                           src="/images/krish.jpg"
                           alt="Krish Mehta"
                           className="w-full h-full object-cover scale-100"
-                          style={{ objectPosition: "50% 35%" }}
+                          style={{ objectPosition: "50% 45%" }}
                         />
                       </div>
                       <div>
-                        <span className="text-2xl text-white font-bold block mb-2">Krish Mehta</span>
-                        <span className="text-base text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
+                        <span className="text-3xl text-white font-bold block mb-3">Krish Mehta</span>
+                        <span className="text-lg text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
                       </div>
                     </div>
 
-                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
                         <img
                           src="/images/tanish.jpg"
                           alt="Tanish Shah"
@@ -480,18 +480,18 @@ export default function Dashboard() {
                         />
                       </div>
                       <div>
-                        <span className="text-2xl text-white font-bold block mb-2">Tanish Shah</span>
-                        <span className="text-base text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
+                        <span className="text-3xl text-white font-bold block mb-3">Tanish Shah</span>
+                        <span className="text-lg text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
                       </div>
                     </div>
 
-                    <div className="p-8 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-6 items-start">
-                      <div className="w-32 h-32 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                        <Users className="w-12 h-12 text-white/20" />
+                    <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
+                      <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
+                        <Users className="w-16 h-16 text-white/20" />
                       </div>
                       <div>
-                        <span className="text-2xl text-white font-bold block mb-2">Shriija Nagrale</span>
-                        <span className="text-base text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
+                        <span className="text-3xl text-white font-bold block mb-3">Shriija Nagrale</span>
+                        <span className="text-lg text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
                       </div>
                     </div>
 

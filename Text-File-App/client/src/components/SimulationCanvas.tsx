@@ -17,12 +17,19 @@ export function SimulationCanvas({
   height
 }: SimulationCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const lastFrameTimeRef = useRef<number>(0);
+  const gradientCacheRef = useRef<Map<string, CanvasGradient>>(new Map());
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
+
+    // Throttle to ~60fps max
+    const now = performance.now();
+    if (now - lastFrameTimeRef.current < 16) return; // ~60fps
+    lastFrameTimeRef.current = now;
 
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, width, height);
@@ -98,15 +105,22 @@ export function SimulationCanvas({
       const endP = Math.min(1, wave.progress);
       const fadeStartP = Math.max(0, startP - fadeLen / dist);
 
-      const gradient = ctx.createLinearGradient(
-        source.x + dx * fadeStartP,
-        source.y + dy * fadeStartP,
-        source.x + dx * endP,
-        source.y + dy * endP
-      );
-      gradient.addColorStop(0, "rgba(239, 68, 68, 0)");
-      gradient.addColorStop(0.3, "rgba(239, 68, 68, 0.6)");
-      gradient.addColorStop(1, "rgba(239, 68, 68, 0.9)");
+      // Cache gradient to avoid recreation each frame
+      const gradientKey = `${wave.sourceId}-${wave.targetId}`;
+      let gradient = gradientCacheRef.current.get(gradientKey);
+
+      if (!gradient) {
+        gradient = ctx.createLinearGradient(
+          source.x + dx * fadeStartP,
+          source.y + dy * fadeStartP,
+          source.x + dx * endP,
+          source.y + dy * endP
+        );
+        gradient.addColorStop(0, "rgba(239, 68, 68, 0)");
+        gradient.addColorStop(0.3, "rgba(239, 68, 68, 0.6)");
+        gradient.addColorStop(1, "rgba(239, 68, 68, 0.9)");
+        gradientCacheRef.current.set(gradientKey, gradient);
+      }
 
       ctx.beginPath();
       ctx.moveTo(
@@ -124,6 +138,11 @@ export function SimulationCanvas({
       ctx.shadowColor = "rgba(239, 68, 68, 0.5)";
       ctx.stroke();
     });
+
+    // Clear old gradients from cache when waves complete
+    if (gradientCacheRef.current.size > 50) {
+      gradientCacheRef.current.clear();
+    }
 
     ctx.shadowBlur = 0;
 
@@ -154,10 +173,14 @@ export function SimulationCanvas({
         ctx.lineWidth = 2.5;
         ctx.stroke();
       }
+    });
 
-      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-      ctx.font = "bold 9px monospace";
-      ctx.textAlign = "center";
+    // Batch text rendering to reduce font changes
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.font = "bold 9px monospace";
+    ctx.textAlign = "center";
+    network.nodes.forEach(node => {
+      if (!node) return;
       ctx.fillText(
         `F-${node.id.toString(16)}`,
         node.x,

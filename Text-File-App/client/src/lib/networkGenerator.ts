@@ -90,32 +90,55 @@ export function generateNetwork(nodeCount: number, width: number, height: number
       .force("link", forceLink(links).id((d: any) => d.id).distance(180).strength(0.4)) // Longer links
       .stop();
 
-    // Run more ticks to stabilize
-    for (let i = 0; i < 400; ++i) simulation.tick();
+    // Run ticks asynchronously in chunks to avoid blocking
+    const ticksPerChunk = 40;
+    const totalTicks = 400;
+    let ticksProcessed = 0;
 
-    const finalNodes: Node[] = nodes.map((n: any) => ({
-      id: n.id,
-      x: Math.max(padding, Math.min(width - padding, n.x)),
-      y: Math.max(padding, Math.min(height - padding, n.y)),
-      type: "normal",
-      health: 100,
-      connections: [],
-      visitCount: 0,
-    }));
+    const processTicks = () => {
+      const ticksToProcess = Math.min(ticksPerChunk, totalTicks - ticksProcessed);
+      for (let i = 0; i < ticksToProcess; i++) {
+        simulation.tick();
+      }
+      ticksProcessed += ticksToProcess;
 
-    links.forEach((l: any) => {
-      const s = typeof l.source === 'object' ? l.source.id : l.source;
-      const t = typeof l.target === 'object' ? l.target.id : l.target;
-      finalNodes[s].connections.push(t);
-      finalNodes[t].connections.push(s);
-    });
+      if (ticksProcessed < totalTicks) {
+        // Continue in next frame to keep UI responsive
+        setTimeout(processTicks, 0);
+      } else {
+        // Finish and resolve
+        finalizeNetwork();
+      }
+    };
 
-    const finalEdges: Edge[] = links.map((l: any) => ({
-      source: typeof l.source === 'object' ? l.source.id : l.source,
-      target: typeof l.target === 'object' ? l.target.id : l.target,
-      pheromone: 1.0,
-    }));
+    const finalizeNetwork = () => {
+      const finalNodes: Node[] = nodes.map((n: any) => ({
+        id: n.id,
+        x: Math.max(padding, Math.min(width - padding, n.x)),
+        y: Math.max(padding, Math.min(height - padding, n.y)),
+        type: "normal",
+        health: 100,
+        connections: [],
+        visitCount: 0,
+      }));
 
-    resolve({ nodes: finalNodes, edges: finalEdges });
+      links.forEach((l: any) => {
+        const s = typeof l.source === 'object' ? l.source.id : l.source;
+        const t = typeof l.target === 'object' ? l.target.id : l.target;
+        finalNodes[s].connections.push(t);
+        finalNodes[t].connections.push(s);
+      });
+
+      const finalEdges: Edge[] = links.map((l: any) => ({
+        source: typeof l.source === 'object' ? l.source.id : l.source,
+        target: typeof l.target === 'object' ? l.target.id : l.target,
+        pheromone: 1.0,
+      }));
+
+      resolve({ nodes: finalNodes, edges: finalEdges });
+    };
+
+    // Start async tick processing
+    setTimeout(processTicks, 0);
   });
 }

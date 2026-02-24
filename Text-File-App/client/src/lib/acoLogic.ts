@@ -53,6 +53,10 @@ export class ACOSimulation {
 
   private activeWaveTargets: Set<string> = new Set();
 
+  // Performance optimization: cache edge lookups
+  private edgeMap: Map<string, number> = new Map();
+  private powCache: Map<string, number> = new Map();
+
   constructor(network: Network, antCount: number) {
     this.state = {
       network,
@@ -66,6 +70,19 @@ export class ACOSimulation {
         agentEfficiency: 0,
       }
     };
+
+    // Build edge lookup map for O(1) access
+    this.buildEdgeMap();
+  }
+
+  private buildEdgeMap() {
+    this.edgeMap.clear();
+    this.state.network.edges.forEach((edge, index) => {
+      const key1 = `${edge.source}-${edge.target}`;
+      const key2 = `${edge.target}-${edge.source}`;
+      this.edgeMap.set(key1, index);
+      this.edgeMap.set(key2, index);
+    });
   }
 
   resetCycleAnalytics() {
@@ -244,8 +261,22 @@ export class ACOSimulation {
           neighbor.type === "suspicious" ? 4 :
             0.5;
 
-      const pheromoneInfluence = Math.pow(edge.pheromone + 0.1, this.alpha);
-      const heuristicInfluence = Math.pow(anomaly + 0.1, this.beta);
+      // Cache expensive Math.pow calls
+      const pheromoneVal = edge.pheromone + 0.1;
+      const powKey1 = `${pheromoneVal.toFixed(2)}-${this.alpha}`;
+      let pheromoneInfluence = this.powCache.get(powKey1);
+      if (pheromoneInfluence === undefined) {
+        pheromoneInfluence = Math.pow(pheromoneVal, this.alpha);
+        this.powCache.set(powKey1, pheromoneInfluence);
+      }
+
+      const heuristicVal = anomaly + 0.1;
+      const powKey2 = `${heuristicVal.toFixed(2)}-${this.beta}`;
+      let heuristicInfluence = this.powCache.get(powKey2);
+      if (heuristicInfluence === undefined) {
+        heuristicInfluence = Math.pow(heuristicVal, this.beta);
+        this.powCache.set(powKey2, heuristicInfluence);
+      }
 
       let score = pheromoneInfluence * heuristicInfluence;
 
@@ -258,6 +289,11 @@ export class ACOSimulation {
       totalScore += score;
       return { neighborId, score };
     });
+
+    // Limit cache size to prevent memory bloat
+    if (this.powCache.size > 1000) {
+      this.powCache.clear();
+    }
 
     if (totalScore === 0 || !Number.isFinite(totalScore)) {
       const randomChoice = neighbors[Math.floor(Math.random() * neighbors.length)];
@@ -388,15 +424,14 @@ export class ACOSimulation {
   }
 
   private findEdge(a: number, b: number): Edge | undefined {
-    return this.state.network.edges.find(e =>
-      (e.source === a && e.target === b) || (e.source === b && e.target === a)
-    );
+    const key = `${a}-${b}`;
+    const index = this.edgeMap.get(key);
+    return index !== undefined ? this.state.network.edges[index] : undefined;
   }
 
   private findEdgeIndex(a: number, b: number): number {
-    return this.state.network.edges.findIndex(e =>
-      (e.source === a && e.target === b) || (e.source === b && e.target === a)
-    );
+    const key = `${a}-${b}`;
+    return this.edgeMap.get(key) ?? -1;
   }
 
   private updateStats() {

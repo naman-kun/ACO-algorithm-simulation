@@ -21,6 +21,20 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
+    minify: 'esbuild',
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'd3-vendor': ['d3-force', 'd3-scale'],
+          'ui-vendor': ['framer-motion'],
+        },
+      },
+    },
+    // Enable compression
+    chunkSizeWarningLimit: 1000,
+    assetsInlineLimit: 4096, // Inline assets smaller than 4kb
   },
   server: {
     fs: {

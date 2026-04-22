@@ -14,6 +14,9 @@ export default function NotFound() {
           <p className="mt-4 text-sm text-gray-600">
             Did you forget to add the page to the router?
           </p>
+          <p className="mt-2 text-xs text-gray-400 font-mono text-center">
+            Trying to access: {window.location.pathname}
+          </p>
         </CardContent>
       </Card>
     </div>

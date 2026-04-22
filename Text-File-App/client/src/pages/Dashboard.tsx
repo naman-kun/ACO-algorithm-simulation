@@ -465,8 +465,13 @@ export default function Dashboard() {
                             style={{ objectPosition: "50% 30%" }}
                           />
                         </div>
-                        <div>
-                          <span className="text-3xl text-white font-bold block mb-3">Naman Shah</span>
+                        <div className="flex flex-col">
+                          <span className="text-3xl text-white font-bold block mb-1">Naman Shah</span>
+                          <div className="text-sm font-mono text-white/50 mb-4 space-y-1">
+                            <div>Roll No: I063</div>
+                            <div>SAP ID: 70122500068</div>
+                            <div>Course: BTech(AI), I2 Batch</div>
+                          </div>
                           <span className="text-lg text-muted-foreground block leading-relaxed">Tech Lead. End to End Development of ACO Simulation and Website. Made the ACO presentation and presented it.</span>
                         </div>
                       </div>
@@ -480,8 +485,13 @@ export default function Dashboard() {
                             style={{ objectPosition: "50% 45%" }}
                           />
                         </div>
-                        <div>
-                          <span className="text-3xl text-white font-bold block mb-3">Krish Mehta</span>
+                        <div className="flex flex-col">
+                          <span className="text-3xl text-white font-bold block mb-1">Krish Mehta</span>
+                          <div className="text-sm font-mono text-white/50 mb-4 space-y-1">
+                            <div>Roll No: I041</div>
+                            <div>SAP ID: 70122500027</div>
+                            <div>Course: BTech(AI), I2 Batch</div>
+                          </div>
                           <span className="text-lg text-muted-foreground block leading-relaxed">Overall Management and Research Lead. SMA presentation content and Research papers for ACO/SMA.</span>
                         </div>
                       </div>
@@ -495,21 +505,17 @@ export default function Dashboard() {
                             style={{ objectPosition: "50% 20%" }}
                           />
                         </div>
-                        <div>
-                          <span className="text-3xl text-white font-bold block mb-3">Tanish Shah</span>
+                        <div className="flex flex-col">
+                          <span className="text-3xl text-white font-bold block mb-1">Tanish Shah</span>
+                          <div className="text-sm font-mono text-white/50 mb-4 space-y-1">
+                            <div>Roll No: I077</div>
+                            <div>SAP ID: 70122500091</div>
+                            <div>Course: BTech (AI), I2 Batch</div>
+                          </div>
                           <span className="text-lg text-muted-foreground block leading-relaxed">Presentation Lead. Made the SMA presentation and presented it in collaboration with Krish Mehta.</span>
                         </div>
                       </div>
 
-                      <div className="p-10 rounded-2xl border border-white/10 bg-white/5 hover:border-orange-500/30 transition-all flex gap-8 items-start">
-                        <div className="w-36 h-36 rounded-full bg-white/10 shrink-0 border border-white/10 flex items-center justify-center overflow-hidden">
-                          <Users className="w-16 h-16 text-white/20" />
-                        </div>
-                        <div>
-                          <span className="text-3xl text-white font-bold block mb-3">Shriija Nagrale</span>
-                          <span className="text-lg text-muted-foreground block leading-relaxed">Video References for SMA and ACO.</span>
-                        </div>
-                      </div>
 
                     </div>
                   </div>

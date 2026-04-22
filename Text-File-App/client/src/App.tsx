@@ -10,7 +10,13 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
-      <Route component={NotFound} />
+      <Route path="/index.html" component={Dashboard} />
+      <Route>
+        {(params) => {
+          console.log("NOT FOUND. URL is:", window.location.pathname);
+          return <NotFound />;
+        }}
+      </Route>
     </Switch>
   );
 }
